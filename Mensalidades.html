@@ -1,71 +1,181 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mensalidades - PFT</title>
-    <link rel="stylesheet" href="css/styleMensalidades.css">
+    <title>Os Nossos Atletas - PFT</title>
+    <meta name="description" content="Conheça os atletas da Pavia Fight Team de Artes Marciais">
+    <link rel="stylesheet" href="css/styleMenuAtletas.css">
+    <link rel="shortcut icon" href="media/pft-logo.svg" type="image/x-icon">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="header-content">
-                <h1>💰Mensalidades</h1>
-                <div class="header-nav">
-                    <a href="Perfil.html" class="nav-link">👤 Perfil</a>
-                    <a href="Aulas.html" class="nav-link">📅 Aulas</a>
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <a href="index.html">
+                <img src="media/pft-logo.svg" alt="Pavia Fight Team">
+            </a>
+        </div>
+        <nav>
+            <a href="index.html">Início</a>
+            <a href="Aulas.html">Aulas</a>
+            <a href="Atletas.html" class="active">Atletas</a>
+            <a href="Perfil.html" id="perfilLink" style="display: none;">Perfil</a>
+            
+            <button class="auth-button" id="loginBtn">Entrar / Criar Conta</button>
+            
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span class="user-name" id="userName"></span>
+                <button class="logout-btn" id="logoutBtn">Sair</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero-atletas">
+        <div class="hero-content">
+            <h1>🥋 Os Nossos Atletas</h1>
+            <p>Conheça os guerreiros da Pavia Fight Team — Montijo</p>
+            <div class="stats-banner">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalAtletas">0</span>
+                    <span class="stat-label">Atletas</span>
                 </div>
-                <div class="user-info">
-                    <span id="nomeUtilizador">Carregando...</span>
-                    <button id="btnLogout" class="btn-logout">Sair</button>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalVitorias">0</span>
+                    <span class="stat-label">Vitórias</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalFaixasPreta">0</span>
+                    <span class="stat-label">Faixas Pretas</span>
                 </div>
             </div>
-        </header>
+        </div>
+    </section>
 
-        <main>
-            <!-- Resumo -->
-            <div class="resumo-container">
-                <div class="resumo-card pendentes">
-                    <div class="resumo-icon">⏳</div>
-                    <div class="resumo-info">
-                        <div class="resumo-label">Pendentes</div>
-                        <div class="resumo-valor" id="totalPendentes">€0</div>
+    <!-- FILTROS -->
+    <section class="filtros-section">
+        <div class="container">
+            <div class="filtros">
+                <div class="filtro-group">
+                    <label for="filtroFaixa">Graduação:</label>
+                    <select id="filtroFaixa">
+                        <option value="">Todas as Faixas</option>
+                        <option value="Branca">Branca</option>
+                        <option value="Amarela">Amarela</option>
+                        <option value="Laranja">Laranja</option>
+                        <option value="Verde">Verde</option>
+                        <option value="Azul">Azul</option>
+                        <option value="Marrom">Castanha (Marrom)</option>
+                        <option value="Preta">Preta</option>
+                    </select>
+                </div>
+                
+                <div class="filtro-group">
+                    <label for="filtroBusca">Buscar:</label>
+                    <input 
+                        type="text" 
+                        id="filtroBusca" 
+                        placeholder="Nome do atleta..."
+                    >
+                </div>
+                
+                <button class="btn-limpar" id="btnLimparFiltros">
+                    Limpar Filtros
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- GRID DE ATLETAS -->
+    <section class="atletas-section">
+        <div class="container">
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>A carregar atletas...</p>
+            </div>
+
+            <!-- Grid -->
+            <div class="atletas-grid" id="atletasGrid">
+                <!-- Cards serão inseridos aqui via JavaScript -->
+            </div>
+
+            <!-- Sem resultados -->
+            <div class="sem-resultados" id="semResultados" style="display: none;">
+                <h3>😔 Nenhum atleta encontrado</h3>
+                <p>Tente ajustar os filtros ou limpar a busca</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL DE PERFIL DETALHADO -->
+    <div class="modal" id="perfilModal" style="display: none;">
+        <div class="modal-content modal-perfil">
+            <button class="close-modal" id="closePerfilModal">&times;</button>
+            
+            <div class="perfil-header">
+                <div class="perfil-avatar" id="modalAvatar">
+                    <span id="modalInitials"></span>
+                </div>
+                <div class="perfil-info">
+                    <h2 id="modalNome">Nome do Atleta</h2>
+                    <p class="perfil-email" id="modalEmail">email@exemplo.com</p>
+                    <span class="perfil-badge" id="modalFaixa">Faixa</span>
+                </div>
+            </div>
+
+            <div class="perfil-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">🥊</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Record MMA</span>
+                        <span class="stat-value" id="modalRecordMMA">0-0-0</span>
                     </div>
                 </div>
-                <div class="resumo-card atrasadas">
-                    <div class="resumo-icon">⚠️</div>
-                    <div class="resumo-info">
-                        <div class="resumo-label">Atrasadas</div>
-                        <div class="resumo-valor" id="totalAtrasadas">0</div>
+                <div class="stat-card">
+                    <div class="stat-icon">🤼</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Record BJJ</span>
+                        <span class="stat-value" id="modalRecordBJJ">0-0</span>
                     </div>
                 </div>
-                <div class="resumo-card pagas">
-                    <div class="resumo-icon">✓</div>
-                    <div class="resumo-info">
-                        <div class="resumo-label">Pagas</div>
-                        <div class="resumo-valor" id="totalPagas">0</div>
+                <div class="stat-card">
+                    <div class="stat-icon">📏</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Características</span>
+                        <span class="stat-value" id="modalFisico">-</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Mensalidades Pendentes -->
-            <div class="secao">
-                <h2>⏳ Mensalidades Pendentes</h2>
-                <div id="listaPendentes" class="lista-pagamentos">
-                    <!-- Será preenchido via JavaScript -->
-                </div>
+            <div class="perfil-sobre" id="modalSobreSection" style="display: none;">
+                <h3>📝 Sobre</h3>
+                <p id="modalSobre"></p>
             </div>
 
-            <!-- Histórico -->
-            <div class="secao">
-                <h2>📜 Histórico de Pagamentos</h2>
-                <div id="listaHistorico" class="lista-pagamentos">
-                    <!-- Será preenchido via JavaScript -->
+            <div class="perfil-especialidades">
+                <div class="especialidade" id="modalEspMMA" style="display: none;">
+                    <strong>Especialidade MMA:</strong>
+                    <span id="modalEspMMATexto"></span>
+                </div>
+                <div class="especialidade" id="modalEspBJJ" style="display: none;">
+                    <strong>Especialidade BJJ:</strong>
+                    <span id="modalEspBJJTexto"></span>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
 
-    <script src="script/mensalidades.js"></script>
-</body>
-</html>
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 PFT - Todos os direitos reservados.</p>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+            Desportos de Combate & Artes Marciais | Montijo, Portugal
+        </p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="routes/auth.js"></script>
+    <script src="script/atletas.js"></script>
+</
