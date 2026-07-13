@@ -1,348 +1,508 @@
 // ============================================
-// SISTEMA DE CALENDÁRIO DE AULAS - ALUNO
+// PAINEL ADMINISTRADOR - Admin.js
 // ============================================
 
-const API_URL = 'http://localhost:3000/api';
-let token = localStorage.getItem('token');
-let todasAulas = [];
-let minhasInscricoes = [];
+console.log('✅ Script do painel admin carregado!');
 
-// Dias da semana
-const DIAS_SEMANA = {
-    1: 'Segunda',
-    2: 'Terça',
-    3: 'Quarta',
-    4: 'Quinta',
-    5: 'Sexta',
-    6: 'Sábado',
-    7: 'Domingo'
-};
-
-// Horários (06:00 - 22:00)
-const HORA_INICIO = 6;
-const HORA_FIM = 22;
+let allUsers = [];
+let currentEditUserId = null;
 
 // ============================================
-// INICIALIZAÇÃO
+// VERIFICAR SE É ADMIN E ESTÁ LOGADO
 // ============================================
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Verificar autenticação
-    if (!token) {
-        alert('Você precisa fazer login primeiro!');
+window.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
+    const utilizador = localStorage.getItem('utilizador');
+    
+    if (!token || !utilizador) {
+        alert('Precisa fazer login primeiro!');
         window.location.href = 'index.html';
         return;
     }
-
-    // Carregar perfil
-    await carregarPerfil();
-
-    // Carregar aulas e inscrições
-    await carregarDados();
-
-    // Event listeners
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    
+    try {
+        const user = JSON.parse(utilizador);
+        
+        // Verificar se é admin
+        if (!user.isAdmin) {
+            alert('❌ Acesso negado! Apenas administradores podem aceder a esta página.');
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        // Mostrar nome do admin
+        document.getElementById('adminName').textContent = user.nome;
+        
+        // Carregar dados
+        loadStats();
+        loadAllUsers();
+        
+        console.log('👨‍💼 Admin logado:', user.nome);
+    } catch (e) {
+        console.error('Erro ao verificar admin:', e);
+        localStorage.removeItem('token');
+        localStorage.removeItem('utilizador');
+        window.location.href = 'index.html';
+    }
 });
 
 // ============================================
-// CARREGAR DADOS
+// CARREGAR ESTATÍSTICAS
 // ============================================
 
-async function carregarPerfil() {
+async function loadStats() {
+    const token = localStorage.getItem('token');
+    
     try {
-        const response = await fetch(`${API_URL}/perfil`, {
+        const response = await fetch('/api/admin/stats', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-
-        if (!response.ok) throw new Error('Erro ao carregar perfil');
-
-        const data = await response.json();
-        document.getElementById('nomeUtilizador').textContent = `Olá, ${data.nome}`;
+        
+        if (response.ok) {
+            const stats = await response.json();
+            
+            document.getElementById('totalUtilizadores').textContent = stats.totalUtilizadores;
+            document.getElementById('novosHoje').textContent = stats.novosHoje;
+            document.getElementById('totalAdmins').textContent = stats.totalAdmins;
+            
+            // Graduação mais comum
+            if (stats.porGraduacao && stats.porGraduacao.length > 0) {
+                document.getElementById('graduacaoComum').textContent = stats.porGraduacao[0]._id;
+            }
+            
+            console.log('📊 Estatísticas:', stats);
+        } else {
+            console.error('Erro ao carregar estatísticas');
+        }
     } catch (error) {
-        console.error('Erro ao carregar perfil:', error);
-        alert('Sessão expirada. Faça login novamente.');
-        logout();
+        console.error('Erro:', error);
     }
 }
 
-async function carregarDados() {
-    try {
-        // Buscar todas as aulas
-        const responseAulas = await fetch(`${API_URL}/aulas`);
-        if (!responseAulas.ok) throw new Error('Erro ao buscar aulas');
-        todasAulas = await responseAulas.json();
+// ============================================
+// CARREGAR TODOS OS UTILIZADORES
+// ============================================
 
-        // Buscar minhas inscrições
-        const responseInscricoes = await fetch(`${API_URL}/minhas-inscricoes`, {
+async function loadAllUsers() {
+    const token = localStorage.getItem('token');
+    const tbody = document.getElementById('usersTableBody');
+    
+    tbody.innerHTML = '<tr><td colspan="8" class="loading-row">Carregando utilizadores...</td></tr>';
+    
+    try {
+        console.log('🔄 Buscando utilizadores...');
+        const response = await fetch('/api/admin/utilizadores', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!responseInscricoes.ok) throw new Error('Erro ao buscar inscrições');
-        minhasInscricoes = await responseInscricoes.json();
-
-        // Renderizar
-        renderizarCalendario();
-        renderizarMinhasInscricoes();
-
-    } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        mostrarMensagem('Erro ao carregar dados', 'erro');
-    }
-}
-
-// ============================================
-// RENDERIZAR CALENDÁRIO
-// ============================================
-
-function renderizarCalendario() {
-    const calendario = document.getElementById('calendario');
-    calendario.innerHTML = '';
-
-    // Header vazio (canto superior esquerdo)
-    const headerEmpty = document.createElement('div');
-    headerEmpty.className = 'cal-header cal-empty';
-    headerEmpty.textContent = 'Hora';
-    calendario.appendChild(headerEmpty);
-
-    // Headers dos dias
-    for (let dia = 1; dia <= 7; dia++) {
-        const headerDia = document.createElement('div');
-        headerDia.className = 'cal-header cal-dia';
-        headerDia.textContent = DIAS_SEMANA[dia];
-        calendario.appendChild(headerDia);
-    }
-
-    // Grid de horários
-    for (let hora = HORA_INICIO; hora <= HORA_FIM; hora++) {
-        // Coluna de hora
-        const cellHora = document.createElement('div');
-        cellHora.className = 'cal-hora';
-        cellHora.textContent = `${String(hora).padStart(2, '0')}:00`;
-        calendario.appendChild(cellHora);
-
-        // Slots para cada dia
-        for (let dia = 1; dia <= 7; dia++) {
-            const horaStr = `${String(hora).padStart(2, '0')}:00`;
-            const slot = document.createElement('div');
-            slot.className = 'cal-slot';
-
-            // Verificar se há aula neste horário
-            const aula = todasAulas.find(a => 
-                a.diaSemana === dia && a.hora === horaStr
-            );
-
-            if (aula) {
-                // Há uma aula neste horário
-                slot.classList.add('com-aula');
-                
-                // Verificar se estou inscrito
-                const inscrito = minhasInscricoes.some(i => i._id === aula._id);
-                if (inscrito) {
-                    slot.classList.add('inscrito');
-                }
-
-                // Verificar se está lotada
-                if (aula.vagasDisponiveis === 0 && !inscrito) {
-                    slot.classList.add('lotada');
-                }
-
-                // Conteúdo da aula
-                slot.innerHTML = `
-                    <div class="aula-nome">${aula.nome}</div>
-                    <div class="aula-professor">${aula.professor}</div>
-                    <div class="aula-vagas">${aula.alunosInscritos}/${aula.limiteAlunos}</div>
-                `;
-
-                // Click handler
-                slot.dataset.aulaId = aula._id;
-                slot.dataset.inscrito = inscrito;
-                slot.dataset.lotada = aula.vagasDisponiveis === 0 && !inscrito;
-                slot.addEventListener('click', () => handleAulaClick(aula, inscrito));
+        
+        console.log('📡 Status da resposta:', response.status);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('📦 Dados recebidos:', data);
+            
+            // A API retorna um objeto com paginação, pegar o array de utilizadores
+            if (data.utilizadores && Array.isArray(data.utilizadores)) {
+                allUsers = data.utilizadores;
+                renderUsers(allUsers);
+                console.log('👥 Utilizadores carregados:', allUsers.length);
+                console.log('📄 Total no sistema:', data.total);
+            } else {
+                console.error('❌ Formato inválido da resposta');
+                tbody.innerHTML = '<tr><td colspan="8" class="error-row">Erro: Formato de resposta inválido</td></tr>';
             }
-
-            calendario.appendChild(slot);
+        } else {
+            const errorData = await response.json();
+            console.error('❌ Erro na resposta:', errorData);
+            tbody.innerHTML = '<tr><td colspan="8" class="error-row">Erro ao carregar utilizadores: ' + (errorData.erro || 'Erro desconhecido') + '</td></tr>';
         }
+    } catch (error) {
+        console.error('❌ Erro ao carregar utilizadores:', error);
+        tbody.innerHTML = '<tr><td colspan="8" class="error-row">Erro de conexão: ' + error.message + '</td></tr>';
     }
 }
 
 // ============================================
-// CLICK NA AULA
+// RENDERIZAR TABELA DE UTILIZADORES
 // ============================================
 
-async function handleAulaClick(aula, inscrito) {
-    if (aula.vagasDisponiveis === 0 && !inscrito) {
-        mostrarMensagem('Esta aula está lotada', 'erro');
+function renderUsers(users) {
+    const tbody = document.getElementById('usersTableBody');
+    
+    // Verificar se users é um array
+    if (!Array.isArray(users)) {
+        console.error('Erro: users não é um array:', users);
+        tbody.innerHTML = '<tr><td colspan="8" class="error-row">Erro: Resposta inválida da API</td></tr>';
         return;
     }
-
-    if (inscrito) {
-        // Desinscrever
-        await desinscrever(aula);
-    } else {
-        // Inscrever
-        await inscrever(aula);
-    }
-}
-
-async function inscrever(aula) {
-    const confirmar = await mostrarModal(
-        'Inscrever em Aula',
-        `
-            <strong>${aula.nome}</strong><br>
-            Professor: ${aula.professor}<br>
-            ${DIAS_SEMANA[aula.diaSemana]} às ${aula.hora}<br>
-            Vagas disponíveis: ${aula.vagasDisponiveis}/${aula.limiteAlunos}
-        `,
-        'Deseja se inscrever nesta aula?'
-    );
-
-    if (!confirmar) return;
-
-    try {
-        const response = await fetch(`${API_URL}/aulas/${aula._id}/inscrever`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.erro || 'Erro ao inscrever');
-        }
-
-        mostrarMensagem('✅ Inscrição realizada com sucesso!', 'sucesso');
-        await carregarDados();
-
-    } catch (error) {
-        console.error('Erro ao inscrever:', error);
-        mostrarMensagem(error.message, 'erro');
-    }
-}
-
-async function desinscrever(aula) {
-    const confirmar = await mostrarModal(
-        'Cancelar Inscrição',
-        `
-            <strong>${aula.nome}</strong><br>
-            Professor: ${aula.professor}<br>
-            ${DIAS_SEMANA[aula.diaSemana]} às ${aula.hora}
-        `,
-        'Deseja cancelar sua inscrição?'
-    );
-
-    if (!confirmar) return;
-
-    try {
-        const response = await fetch(`${API_URL}/aulas/${aula._id}/desinscrever`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.erro || 'Erro ao desinscrever');
-        }
-
-        mostrarMensagem('Inscrição cancelada', 'sucesso');
-        await carregarDados();
-
-    } catch (error) {
-        console.error('Erro ao desinscrever:', error);
-        mostrarMensagem(error.message, 'erro');
-    }
-}
-
-// ============================================
-// MINHAS INSCRIÇÕES
-// ============================================
-
-function renderizarMinhasInscricoes() {
-    const lista = document.getElementById('minhasInscricoesList');
-
-    if (minhasInscricoes.length === 0) {
-        lista.innerHTML = '<p class="vazio">Você não está inscrito em nenhuma aula</p>';
+    
+    if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="empty-row">Nenhum utilizador encontrado</td></tr>';
         return;
     }
+    
+    tbody.innerHTML = users.map(user => {
+        const recordMMA = `${user.mma_vitorias || 0}-${user.mma_derrotas || 0}-${user.mma_empates || 0}`;
+        const dataRegistro = new Date(user.dataRegisto).toLocaleDateString('pt-PT');
+        const adminBadge = user.isAdmin ? '👨‍💼 Sim' : 'Não';
+        const userId = user._id || user.id; // MongoDB usa _id
+        
+        return `
+            <tr>
+                <td><strong>${user.nome}</strong></td>
+                <td>${user.email}</td>
+                <td>${user.idade}</td>
+                <td><span class="badge-graduacao">${user.graduacao}</span></td>
+                <td>${recordMMA}</td>
+                <td>${adminBadge}</td>
+                <td>${dataRegistro}</td>
+                <td class="actions-cell">
+                    <button class="btn-action btn-view" onclick="viewUser('${userId}')" title="Ver">
+                        👁️
+                    </button>
+                    <button class="btn-action btn-edit" onclick="editUser('${userId}')" title="Editar">
+                        ✏️
+                    </button>
+                    <button class="btn-action btn-admin" onclick="toggleAdmin('${userId}', ${!user.isAdmin})" title="${user.isAdmin ? 'Remover Admin' : 'Tornar Admin'}">
+                        ${user.isAdmin ? '👤' : '👨‍💼'}
+                    </button>
+                    <button class="btn-action btn-delete" onclick="deleteUser('${userId}', '${user.nome}')" title="Eliminar">
+                        🗑️
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
 
-    // Ordenar por dia e hora
-    const inscricoesOrdenadas = [...minhasInscricoes].sort((a, b) => {
-        if (a.diaSemana !== b.diaSemana) return a.diaSemana - b.diaSemana;
-        return a.hora.localeCompare(b.hora);
-    });
+// ============================================
+// PESQUISA EM TEMPO REAL
+// ============================================
 
-    lista.innerHTML = inscricoesOrdenadas.map(aula => `
-        <div class="inscricao-card">
-            <div class="inscricao-info">
-                <div class="inscricao-nome">${aula.nome}</div>
-                <div class="inscricao-details">
-                    <span>📅 ${DIAS_SEMANA[aula.diaSemana]}</span>
-                    <span>🕐 ${aula.hora}</span>
-                    <span>👨‍🏫 ${aula.professor}</span>
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    const filteredUsers = allUsers.filter(user => 
+        user.nome.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm)
+    );
+    
+    renderUsers(filteredUsers);
+});
+
+// ============================================
+// VER UTILIZADOR
+// ============================================
+
+async function viewUser(userId) {
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(`/api/admin/utilizador/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+            const user = await response.json();
+            
+            const content = `
+                <div class="user-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Nome:</span>
+                        <span class="detail-value">${user.nome}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Email:</span>
+                        <span class="detail-value">${user.email}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Idade:</span>
+                        <span class="detail-value">${user.idade} anos</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Graduação:</span>
+                        <span class="detail-value">${user.graduacao}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Administrador:</span>
+                        <span class="detail-value">${user.isAdmin ? '👨‍💼 Sim' : 'Não'}</span>
+                    </div>
+                    
+                    <h3>🥊 Carreira MMA</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Record:</span>
+                        <span class="detail-value">${user.mma_vitorias || 0}-${user.mma_derrotas || 0}-${user.mma_empates || 0}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Especialidade:</span>
+                        <span class="detail-value">${user.mma_especialidade || 'N/A'}</span>
+                    </div>
+                    
+                    <h3>🤼 Carreira BJJ</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Record:</span>
+                        <span class="detail-value">${user.bjj_vitorias || 0}-${user.bjj_derrotas || 0}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Especialidade:</span>
+                        <span class="detail-value">${user.bjj_especialidade || 'N/A'}</span>
+                    </div>
+                    
+                    <h3>📏 Características Físicas</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Altura:</span>
+                        <span class="detail-value">${user.altura ? user.altura + 'm' : 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Peso:</span>
+                        <span class="detail-value">${user.peso ? user.peso + 'kg' : 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Alcance:</span>
+                        <span class="detail-value">${user.alcance ? user.alcance + 'cm' : 'N/A'}</span>
+                    </div>
+                    
+                    <h3>📝 Sobre</h3>
+                    <p class="user-bio">${user.sobre || 'Sem biografia'}</p>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Membro desde:</span>
+                        <span class="detail-value">${new Date(user.dataRegisto).toLocaleDateString('pt-PT', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric' 
+                        })}</span>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <a href="AtletaPerfil.html?id=${userId}" 
+                           target="_blank"
+                           style="display: inline-block; background: linear-gradient(135deg, #1fa036 0%, #0c6e22 100%); color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+                            👁️ Ver Perfil Completo
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <button class="btn-cancelar-inscricao" data-id="${aula._id}">
-                Cancelar
-            </button>
-        </div>
-    `).join('');
-
-    // Event listeners
-    lista.querySelectorAll('.btn-cancelar-inscricao').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const aula = minhasInscricoes.find(a => a._id === btn.dataset.id);
-            if (aula) {
-                await desinscrever(aula);
-            }
-        });
-    });
-}
-
-// ============================================
-// MODAL
-// ============================================
-
-function mostrarModal(titulo, details, mensagem) {
-    return new Promise((resolve) => {
-        const modal = document.getElementById('modalConfirm');
-        document.getElementById('modalTitle').textContent = titulo;
-        document.getElementById('modalDetails').innerHTML = details;
-        document.getElementById('modalMessage').textContent = mensagem;
-
-        modal.style.display = 'flex';
-
-        const btnConfirmar = document.getElementById('btnConfirmar');
-        const btnCancelar = document.getElementById('btnCancelar');
-
-        function fechar(resultado) {
-            modal.style.display = 'none';
-            btnConfirmar.onclick = null;
-            btnCancelar.onclick = null;
-            resolve(resultado);
+            `;
+            
+            document.getElementById('userDetailsContent').innerHTML = content;
+            document.getElementById('viewUserModal').style.display = 'flex';
+        } else {
+            alert('Erro ao carregar utilizador');
         }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro de conexão');
+    }
+}
 
-        btnConfirmar.onclick = () => fechar(true);
-        btnCancelar.onclick = () => fechar(false);
-    });
+function closeViewModal() {
+    document.getElementById('viewUserModal').style.display = 'none';
 }
 
 // ============================================
-// UTILITÁRIOS
+// EDITAR UTILIZADOR
 // ============================================
 
-function mostrarMensagem(texto, tipo) {
-    const msg = document.createElement('div');
-    msg.className = `mensagem mensagem-${tipo}`;
-    msg.textContent = texto;
-    document.body.appendChild(msg);
-
-    setTimeout(() => msg.remove(), 3000);
+async function editUser(userId) {
+    const token = localStorage.getItem('token');
+    currentEditUserId = userId;
+    
+    try {
+        const response = await fetch(`/api/admin/utilizador/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+            const user = await response.json();
+            
+            // Preencher formulário
+            document.getElementById('editNome').value = user.nome;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editIdade').value = user.idade;
+            document.getElementById('editGraduacao').value = user.graduacao;
+            document.getElementById('editMmaVitorias').value = user.mma_vitorias || 0;
+            document.getElementById('editMmaDerrotas').value = user.mma_derrotas || 0;
+            document.getElementById('editMmaEmpates').value = user.mma_empates || 0;
+            document.getElementById('editMmaEspecialidade').value = user.mma_especialidade || '';
+            document.getElementById('editBjjVitorias').value = user.bjj_vitorias || 0;
+            document.getElementById('editBjjDerrotas').value = user.bjj_derrotas || 0;
+            document.getElementById('editBjjEspecialidade').value = user.bjj_especialidade || '';
+            document.getElementById('editAltura').value = user.altura || '';
+            document.getElementById('editPeso').value = user.peso || '';
+            document.getElementById('editAlcance').value = user.alcance || '';
+            document.getElementById('editSobre').value = user.sobre || '';
+            
+            document.getElementById('editUserModal').style.display = 'flex';
+        } else {
+            alert('Erro ao carregar utilizador');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro de conexão');
+    }
 }
+
+function closeEditModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+    document.getElementById('editError').style.display = 'none';
+    currentEditUserId = null;
+}
+
+// Handle edit form submission
+document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const token = localStorage.getItem('token');
+    const errorEl = document.getElementById('editError');
+    errorEl.style.display = 'none';
+    
+    const dadosAtualizacao = {
+        nome: document.getElementById('editNome').value.trim(),
+        idade: parseInt(document.getElementById('editIdade').value),
+        graduacao: document.getElementById('editGraduacao').value,
+        mma_vitorias: parseInt(document.getElementById('editMmaVitorias').value) || 0,
+        mma_derrotas: parseInt(document.getElementById('editMmaDerrotas').value) || 0,
+        mma_empates: parseInt(document.getElementById('editMmaEmpates').value) || 0,
+        mma_especialidade: document.getElementById('editMmaEspecialidade').value.trim(),
+        bjj_vitorias: parseInt(document.getElementById('editBjjVitorias').value) || 0,
+        bjj_derrotas: parseInt(document.getElementById('editBjjDerrotas').value) || 0,
+        bjj_especialidade: document.getElementById('editBjjEspecialidade').value.trim(),
+        altura: parseFloat(document.getElementById('editAltura').value) || null,
+        peso: parseFloat(document.getElementById('editPeso').value) || null,
+        alcance: parseInt(document.getElementById('editAlcance').value) || null,
+        sobre: document.getElementById('editSobre').value.trim()
+    };
+    
+    try {
+        const response = await fetch(`/api/admin/utilizador/${currentEditUserId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(dadosAtualizacao)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            closeEditModal();
+            showSuccess('Utilizador Atualizado!', 'Os dados foram atualizados com sucesso.');
+            loadAllUsers();
+            loadStats();
+        } else {
+            errorEl.textContent = data.erro || 'Erro ao atualizar utilizador';
+            errorEl.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        errorEl.textContent = 'Erro de conexão. Tente novamente.';
+        errorEl.style.display = 'block';
+    }
+});
+
+// ============================================
+// TORNAR/REMOVER ADMIN
+// ============================================
+
+async function toggleAdmin(userId, makeAdmin) {
+    const action = makeAdmin ? 'promover a administrador' : 'remover privilégios de admin';
+    
+    if (!confirm(`Deseja realmente ${action} este utilizador?`)) {
+        return;
+    }
+    
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(`/api/admin/tornar-admin/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ isAdmin: makeAdmin })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showSuccess('Permissões Alteradas!', data.mensagem);
+            loadAllUsers();
+            loadStats();
+        } else {
+            alert('Erro: ' + (data.erro || 'Erro ao alterar permissões'));
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro de conexão');
+    }
+}
+
+// ============================================
+// ELIMINAR UTILIZADOR
+// ============================================
+
+async function deleteUser(userId, userName) {
+    const confirmation = prompt(
+        `⚠️ ATENÇÃO! Esta ação é irreversível.\n\nPara eliminar ${userName}, digite "ELIMINAR":`
+    );
+    
+    if (confirmation !== 'ELIMINAR') {
+        if (confirmation !== null) {
+            alert('Texto incorreto. Utilizador não foi eliminado.');
+        }
+        return;
+    }
+    
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(`/api/admin/utilizador/${userId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showSuccess('Utilizador Eliminado!', `${userName} foi eliminado com sucesso.`);
+            loadAllUsers();
+            loadStats();
+        } else {
+            alert('Erro: ' + (data.erro || 'Erro ao eliminar utilizador'));
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro de conexão');
+    }
+}
+
+// ============================================
+// SUCCESS MODAL
+// ============================================
+
+function showSuccess(title, message) {
+    document.getElementById('successTitle').textContent = title;
+    document.getElementById('successMessage').textContent = message;
+    document.getElementById('successModal').style.display = 'flex';
+}
+
+function closeSuccessModal() {
+    document.getElementById('successModal').style.display = 'none';
+}
+
+// ============================================
+// LOGOUT
+// ============================================
 
 function logout() {
-    localStorage.removeItem('token');
-    window.location.href = 'index.html';
+    if (confirm('Deseja realmente sair do painel admin?')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('utilizador');
+        window.location.href = 'index.html';
+    }
 }
+
+console.log('✅ Script do painel admin totalmente carregado!');

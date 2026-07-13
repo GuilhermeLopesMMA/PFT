@@ -1,240 +1,302 @@
 /* ============================================
-   MODAL DE CROP DE IMAGEM
+   PERFIL DE ATLETA - styleAtleta.css
    ============================================ */
 
-.crop-modal {
-    max-width: 900px;
-    width: 95%;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.crop-container {
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #1f1f1f;
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+/* ============================================
+   BREADCRUMB
+   ============================================ */
+
+.breadcrumb {
+    list-style: none;
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-.crop-preview-area {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    background: #000;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-#cropImage {
-    display: block;
-    width: 100%;
-    height: auto;
-    max-height: 500px;
-    object-fit: contain;
-}
-
-.crop-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-}
-
-.crop-box {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 300px;
-    height: 300px;
-    transform: translate(-50%, -50%);
-    border: 2px solid #1fa036;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
-    cursor: move;
-    pointer-events: auto;
-    background: transparent;
-}
-
-.crop-handle {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: #1fa036;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    pointer-events: auto;
-}
-
-.crop-handle.crop-nw {
-    top: -10px;
-    left: -10px;
-    cursor: nw-resize;
-}
-
-.crop-handle.crop-ne {
-    top: -10px;
-    right: -10px;
-    cursor: ne-resize;
-}
-
-.crop-handle.crop-sw {
-    bottom: -10px;
-    left: -10px;
-    cursor: sw-resize;
-}
-
-.crop-handle.crop-se {
-    bottom: -10px;
-    right: -10px;
-    cursor: se-resize;
-}
-
-.crop-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.crop-info {
-    text-align: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
     color: #aaa;
 }
 
-.crop-info p {
-    margin: 0.25rem 0;
+.breadcrumb li::after {
+    content: " >";
+    margin-left: 0.5rem;
+}
+
+.breadcrumb li:last-child::after {
+    content: "";
+}
+
+.breadcrumb a {
+    color: #1fa036;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: #37c74f;
+    text-decoration: underline;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header img {
+    height: 60px;
+    transition: transform 0.3s;
+}
+
+header img:hover {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #1fa036;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+main > p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-bottom: 2rem;
+}
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+
+section {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    border-left: 4px solid #1fa036;
+}
+
+section h2 {
+    color: #1fa036;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #333;
+}
+
+/* ============================================
+   FOTO E INFO PRINCIPAL
+   ============================================ */
+
+section:first-of-type {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.foto {
+    text-align: center;
+}
+
+.foto img {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(31, 160, 54, 0.3);
+    border: 3px solid #1fa036;
+}
+
+section ul {
+    list-style: none;
+}
+
+section ul li {
+    padding: 0.75rem 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #333;
+}
+
+section ul li:last-child {
+    border-bottom: none;
+}
+
+section ul li strong {
+    color: #1fa036;
+    margin-right: 0.5rem;
+}
+
+/* ============================================
+   TABELA DE LUTAS
+   ============================================ */
+
+.centerTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.centerTable thead {
+    background: #1fa036;
+}
+
+.centerTable th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     font-size: 0.9rem;
 }
 
-#cropSize {
-    color: #1fa036;
-    font-weight: 600;
+.centerTable tbody tr {
+    border-bottom: 1px solid #333;
+    transition: all 0.3s;
 }
 
-.crop-zoom {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    justify-content: center;
+.centerTable tbody tr:hover {
+    background: rgba(31, 160, 54, 0.1);
 }
 
-.crop-zoom label {
-    color: #aaa;
-    font-weight: 600;
+.centerTable td {
+    padding: 1rem;
+    color: #ddd;
 }
 
-.crop-zoom input[type="range"] {
-    flex: 1;
-    max-width: 300px;
-    height: 6px;
+/* ============================================
+   SOBRE
+   ============================================ */
+
+section:last-of-type p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #ddd;
+}
+
+/* ============================================
+   BADGES E DESTAQUEES
+   ============================================ */
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
     background: rgba(31, 160, 54, 0.2);
-    border-radius: 3px;
-    outline: none;
-    -webkit-appearance: none;
-}
-
-.crop-zoom input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    background: #1fa036;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.crop-zoom input[type="range"]::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    background: #1fa036;
-    border-radius: 50%;
-    cursor: pointer;
-    border: none;
-}
-
-#zoomValue {
     color: #1fa036;
+    border-radius: 20px;
+    font-size: 0.85rem;
     font-weight: 600;
-    min-width: 50px;
+    border: 1px solid #1fa036;
+    margin-left: 0.5rem;
 }
 
-.crop-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 1rem;
+.record-destaque {
+    font-size: 1.3rem;
+    color: #1fa036;
+    font-weight: 700;
 }
 
-.crop-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 1rem;
-}
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 
-.btn-primary {
-    background: #1fa036;
-    color: white;
-    border: none;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 1rem;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(31, 160, 54, 0.3);
-}
-
-.btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.btn-secondary {
-    background: transparent;
-    color: #aaa;
-    border: 2px solid #aaa;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 1rem;
-}
-
-.btn-secondary:hover {
-    color: #ef4444;
-    border-color: #ef4444;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-    .crop-modal {
+    body {
+        padding: 1rem;
+    }
+
+    main {
         padding: 1.5rem;
     }
-    
-    .crop-preview-area {
-        max-width: 100%;
+
+    h1 {
+        font-size: 2rem;
     }
-    
-    #cropImage {
-        max-height: 400px;
+
+    section:first-of-type {
+        grid-template-columns: 1fr;
     }
-    
-    .crop-box {
-        width: 250px;
-        height: 250px;
+
+    .foto img {
+        max-width: 250px;
     }
-    
-    .crop-actions {
-        flex-direction: column;
+
+    .centerTable {
+        font-size: 0.85rem;
     }
-    
-    .crop-actions button {
-        width: 100%;
+
+    .centerTable th,
+    .centerTable td {
+        padding: 0.5rem;
     }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+section {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1fa036;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0c6e22;
 }

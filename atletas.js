@@ -1,73 +1,132 @@
-const mongoose = require("mongoose");
+/* ============================================
+   SEÇÃO DE FOTO DE PERFIL
+   ============================================ */
 
-const aulaSchema = new mongoose.Schema({
-  nome: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  professor: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  diaSemana: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 7  // 1=Segunda, 2=Terça, ..., 7=Domingo
-  },
-  hora: {
-    type: String,
-    required: true,
-    match: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/  // Formato HH:MM
-  },
-  duracao: {
-    type: Number,
-    default: 60,  // duração em minutos
-    min: 30,
-    max: 180
-  },
-  limiteAlunos: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 100
-  },
-  alunosInscritos: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  cor: {
-    type: String,
-    default: '#1fa036'  // Verde PFT por defeito
-  },
-  ativa: {
-    type: Boolean,
-    default: true
-  },
-  criadaEm: {
-    type: Date,
-    default: Date.now
-  }
-});
+.photo-section {
+    margin-bottom: 2rem;
+}
 
-// Índice único para prevenir aulas duplicadas no mesmo horário
-aulaSchema.index({ diaSemana: 1, hora: 1 }, { unique: true });
+.photo-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.5rem;
+}
 
-// Virtual para vagas disponíveis
-aulaSchema.virtual('vagasDisponiveis').get(function() {
-  return this.limiteAlunos - this.alunosInscritos.length;
-});
+.photo-preview {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+}
 
-// Método para verificar se ainda há vagas
-aulaSchema.methods.temVagas = function() {
-  return this.alunosInscritos.length < this.limiteAlunos;
-};
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 3px solid #1fa036;
+    box-shadow: 0 4px 12px rgba(31, 160, 54, 0.3);
+}
 
-// Método para verificar se aluno está inscrito
-aulaSchema.methods.alunoInscrito = function(alunoId) {
-  return this.alunosInscritos.some(id => id.toString() === alunoId.toString());
-};
+.photo-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #1fa036;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    font-weight: 700;
+    color: white;
+    border: 3px solid #1fa036;
+    box-shadow: 0 4px 12px rgba(31, 160, 54, 0.3);
+}
 
-module.exports = mongoose.model("Aula", aulaSchema);
+.photo-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.btn-upload,
+.btn-remove {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-upload {
+    background: #1fa036;
+    color: white;
+    box-shadow: 0 4px 12px rgba(31, 160, 54, 0.3);
+}
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(31, 160, 54, 0.4);
+}
+
+.btn-upload:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-remove {
+    background: #dc2626;
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-remove:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.btn-remove:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.photo-info {
+    font-size: 0.875rem;
+    color: #aaa;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .photo-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .photo-preview {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .photo-placeholder {
+        font-size: 3rem;
+    }
+    
+    .photo-actions {
+        width: 100%;
+    }
+    
+    .btn-upload,
+    .btn-remove {
+        width: 100%;
+    }
+}

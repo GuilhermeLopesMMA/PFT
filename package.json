@@ -1,23 +1,112 @@
-{
-  "name": "pap",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.1.2",
-    "multer": "^2.1.1",
-    "nodemailer": "^6.9.8"
-  }
-}
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/styleAtleta.css">
+    <title>Simão Costa</title>
+    <ul class="breadcrumb">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="Atletas.html">Atletas</a></li>
+    </ul>
+</head>
+<body>
+    <header>
+        <a href="index.html"><img src="media/pft-logo.svg"></a>
+        <a href="EditarAtleta.html"><button class="edit-button" id="editAtletaBtn">Editar este Atleta</button></a>
+    </header>
+    <main>
+        <h1 style="font-family: Georgia, 'Times New Roman', Times, serif;">Simão Costa</h1>
+        <p>Apelido: "sybau💔"</p>
+        <section>
+            <div class="foto">
+            <img src="../media/sigmasybau.png" alt="Simão Costa" width="300">
+            </div>
+            <ul>
+                <li><strong>Nacionalidade:</strong> Português</li>
+                <li><strong>Data de Nascimento:</strong> 07/12/2004</li>
+                <li><strong>Idade:</strong> 20 anos</li>
+                <li><strong>Altura:</strong> 1.85 m</li>
+                <li><strong>Alcance:</strong>52 cm</li>
+                <li><strong>Peso:</strong> 91 kg</li>
+                <li><strong>Categoria de Peso:</strong> Middleweight </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Carreira de MMA</h2>
+            <ul>
+                <li><strong>Vitórias:</strong> 25</li>
+                <li><strong>Derrotas:</strong> 0</li>
+                <li><strong>Empates:</strong> 0</li>
+                <li><strong>Especialidade:</strong> Grappling</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Carreira de BJJ</h2>
+            <ul>
+                <li><strong>Vitórias:</strong> 58</li>
+                <li><strong>Derrotas:</strong> 14</li>
+                <li><strong>Especialidade:</strong> Berimbolo</li>
+            </ul>    
+            </section>
+
+        <section>
+            <h2>Títulos e Conquistas</h2>
+            <ul>
+                <li>Duplo Campeão do UFC</li>
+                <li>1º Duplo Campeão do Glory</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Lutas Mais Recentes</h2>
+            <table border="1" class="centerTable">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Oponente</th>
+                        <th>Método</th>
+                        <th>Round</th>
+                        <th>Tempo</th>
+                        <th>Evento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>04/09/2025</td>
+                        <td>Magomed Ankalaev</td>
+                        <td>KO-TKO</td>
+                        <td>1</td>
+                        <td>01:20</td>
+                        <td>UFC 320</td>
+                    </tr>
+                    <tr>
+                        <td>08/03/2025</td>
+                        <td>Magomed Ankalaev</td>
+                        <td>Decisão Unanime</td>
+                        <td>5</td>
+                        <td>05:00</td>
+                        <td>UFC 313</td>
+                    </tr>
+                    <tr>
+                        <td>05/10/2024</td>
+                        <td>Khalil Rountree Jr.</td>
+                        <td>KO-TKO</td>
+                        <td>4</td>
+                        <td>04:32</td>
+                        <td>UFC 307</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section>
+            <h2>Sobre</h2>
+            <p>
+                Vindo da Atalaia, Simão, apresenta um strike e grappling bastante tecnicos e com nenhuma vontade de voltar atrás
+            </p>
+        </section>
+    </main>
+</body>
+</html>
