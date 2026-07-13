@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" role="img" aria-label="Pavia Fight Team">
-  <text x="320" y="78" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="86" fill="#ffffff" letter-spacing="2">PAVIA</text>
-  <g>
-    <rect x="70" y="104" width="180" height="6" fill="#d81f26"/>
-    <rect x="390" y="104" width="180" height="6" fill="#1fa036"/>
-  </g>
-  <text x="320" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="46" fill="#ffffff" letter-spacing="10">FIGHT TEAM</text>
-</svg>
