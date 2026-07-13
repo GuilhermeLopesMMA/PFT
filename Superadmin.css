@@ -1,594 +1,373 @@
-/* ========================================
-   ATLETAS.CSS - PÁGINA DE ATLETAS
-======================================== */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #111111;
-    color: #fff;
-    min-height: 100vh;
-}
-
-/* ========================================
-   HEADER
-======================================== */
-
-header {
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(10px);
-    padding: 1rem 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 1px solid rgba(216, 31, 38, 0.2);
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo img {
-    height: 50px;
-}
-
-nav {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-nav a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
-    position: relative;
-}
-
-nav a:hover,
-nav a.active {
-    color: #d81f26;
-}
-
-nav a.active::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #d81f26;
-}
-
-.auth-button {
-    background: #d81f26;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.auth-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(216, 31, 38, 0.4);
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.user-name {
-    font-weight: 600;
-    color: #d81f26;
-}
-
-.logout-btn {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    border: 1px solid #ef4444;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.logout-btn:hover {
-    background: #ef4444;
-    color: white;
-}
-
-/* ========================================
-   HERO SECTION
-======================================== */
-
-.hero-atletas {
-    background: rgba(216,31,38,0.1);
-    padding: 4rem 2rem;
-    text-align: center;
-    border-bottom: 1px solid rgba(216, 31, 38, 0.2);
-}
-
-.hero-content h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    background: #d81f26;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.hero-content p {
-    font-size: 1.3rem;
-    color: #aaa;
-    margin-bottom: 2rem;
-}
-
-.stats-banner {
-    display: flex;
-    justify-content: center;
-    gap: 4rem;
-    margin-top: 2rem;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #d81f26;
-    line-height: 1;
-}
-
-.stat-label {
-    font-size: 0.9rem;
-    color: #888;
-    margin-top: 0.5rem;
-}
-
-/* ========================================
-   FILTROS
-======================================== */
-
-.filtros-section {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 2rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.filtros {
-    display: flex;
-    gap: 2rem;
-    align-items: flex-end;
-    flex-wrap: wrap;
-}
-
-.filtro-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    flex: 1;
-    min-width: 200px;
-}
-
-.filtro-group label {
-    font-size: 0.9rem;
-    color: #888;
-    font-weight: 500;
-}
-
-.filtro-group select,
-.filtro-group input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #fff;
-    padding: 0.8rem 1rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.filtro-group select:focus,
-.filtro-group input:focus {
-    outline: none;
-    border-color: #d81f26;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.btn-limpar {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid #ef4444;
-    color: #ef4444;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
-}
-
-.btn-limpar:hover {
-    background: #ef4444;
-    color: white;
-}
-
-/* ========================================
-   ATLETAS GRID
-======================================== */
-
-.atletas-section {
-    padding: 3rem 2rem;
-    min-height: 60vh;
-}
-
-.loading {
-    text-align: center;
-    padding: 4rem;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    margin: 0 auto 1rem;
-    border: 4px solid rgba(216, 31, 38, 0.1);
-    border-top-color: #d81f26;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.atletas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.atleta-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 1.5rem;
-    text-align: center;
-    transition: all 0.3s;
-    cursor: pointer;
-}
-
-.atleta-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(216, 31, 38, 0.2);
-    border-color: #d81f26;
-}
-
-.atleta-avatar {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 1rem;
-    border-radius: 50%;
-    background: #d81f26;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: white;
-    border: 3px solid rgba(216, 31, 38, 0.3);
-}
-
-.atleta-nome {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #fff;
-}
-
-.atleta-faixa {
-    display: inline-block;
-    background: rgba(216, 31, 38, 0.2);
-    color: #d81f26;
-    padding: 0.3rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.atleta-stats {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stat {
-    display: flex;
-    flex-direction: column;
-}
-
-.stat-label-small {
-    font-size: 0.75rem;
-    color: #888;
-    margin-bottom: 0.3rem;
-}
-
-.stat-value-small {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #d81f26;
-}
-
-.btn-ver-perfil {
-    margin-top: 1rem;
-    background: #d81f26;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    width: 100%;
-}
-
-.btn-ver-perfil:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(216, 31, 38, 0.4);
-}
-
-.sem-resultados {
-    text-align: center;
-    padding: 4rem;
-}
-
-.sem-resultados h3 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #888;
-}
-
-.sem-resultados p {
-    color: #666;
-}
-
-/* ========================================
-   MODAL DE PERFIL
-======================================== */
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
-    overflow-y: auto;
-}
-
-.modal-perfil {
-    background: #222222;
-    padding: 2rem;
-    border-radius: 20px;
-    max-width: 600px;
-    width: 90%;
-    margin: 2rem auto;
-    position: relative;
-    border: 1px solid rgba(216, 31, 38, 0.3);
-}
-
-.close-modal {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 2rem;
-    color: #888;
-    cursor: pointer;
-    background: none;
-    border: none;
-    transition: color 0.3s;
-}
-
-.close-modal:hover {
-    color: #fff;
-}
-
-.perfil-header {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.perfil-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #d81f26;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: white;
-    border: 3px solid rgba(216, 31, 38, 0.3);
-    flex-shrink: 0;
-}
-
-.perfil-info {
-    flex: 1;
-}
-
-.perfil-info h2 {
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
-}
-
-.perfil-email {
-    color: #888;
-    margin-bottom: 0.8rem;
-}
-
-.perfil-badge {
-    display: inline-block;
-    background: rgba(216, 31, 38, 0.2);
-    color: #d81f26;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.perfil-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.stat-card {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1rem;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.stat-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    font-size: 0.85rem;
-    color: #888;
-    display: block;
-    margin-bottom: 0.3rem;
-}
-
-.stat-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #d81f26;
-}
-
-.perfil-sobre {
-    margin-bottom: 2rem;
-}
-
-.perfil-sobre h3 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #d81f26;
-}
-
-.perfil-sobre p {
-    color: #aaa;
-    line-height: 1.6;
-}
-
-.perfil-especialidades {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.especialidade {
-    background: rgba(216, 31, 38, 0.1);
-    padding: 0.8rem;
-    border-radius: 8px;
-    border-left: 3px solid #d81f26;
-}
-
-.especialidade strong {
-    color: #d81f26;
-    margin-right: 0.5rem;
-}
-
-.especialidade span {
-    color: #aaa;
-}
-
-/* ========================================
-   FOOTER
-======================================== */
-
-footer {
-    background: rgba(0, 0, 0, 0.5);
-    padding: 2rem;
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 4rem;
-}
-
-footer p {
-    color: #888;
-}
-
-/* ========================================
-   RESPONSIVE
-======================================== */
-
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2rem;
-    }
-    
-    .stats-banner {
-        gap: 2rem;
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-    }
-    
-    .filtros {
-        flex-direction: column;
-    }
-    
-    .filtro-group {
-        min-width: 100%;
-    }
-    
-    .atletas-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    nav {
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    
-    .perfil-header {
-        flex-direction: column;
-        text-align: center;
-    }
-} 
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - PFT</title>
+    <link rel="stylesheet" href="css/stylePerfil.css">
+    <link rel="stylesheet" href="css/cropfoto.css">
+    <link rel="stylesheet" href="css/cropupload.css">
+    <link rel="shortcut icon" href="media/pft-logo.svg" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <a href="index.html">
+            <img src="media/pft-logo.svg" alt="Pavia Fight Team">
+        </a>
+        <ul class="breadcrumb">
+            <li><a href="index.html">Home</a></li>
+            <li>Meu Perfil</li>
+        </ul>
+    </header>
+
+    <main>
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span id="avatarInitials"></span>
+                </div>
+                <div class="profile-info">
+                    <h1 id="profileName">Carregando...</h1>
+                    <p class="profile-email" id="profileEmail"></p>
+                    <span class="profile-badge" id="profileBadge"></span>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="quick-links-section">
+                <div class="quick-links-grid">
+                    <a href="Aulas.html" class="quick-link-card">
+                        <div class="quick-link-icon">📅</div>
+                        <div class="quick-link-title">As Minhas Aulas</div>
+                        <div class="quick-link-desc">Ver horário e inscrever-me</div>
+                    </a>
+                    <a href="Mensalidades.html" class="quick-link-card">
+                        <div class="quick-link-icon">💰</div>
+                        <div class="quick-link-title">Mensalidades</div>
+                        <div class="quick-link-desc">Ver pagamentos e multas</div>
+                    </a>
+                    <a href="Atletas.html" class="quick-link-card">
+                        <div class="quick-link-icon">🥋</div>
+                        <div class="quick-link-title">Atletas</div>
+                        <div class="quick-link-desc">Ver todos os atletas</div>
+                    </a>
+                    <a href="Admin.html" class="quick-link-card admin-only" id="adminLink" style="display: none;">
+                        <div class="quick-link-icon">⚙️</div>
+                        <div class="quick-link-title">Painel Admin</div>
+                        <div class="quick-link-desc">Gestão do sistema</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Photo Upload Section -->
+            <div class="profile-section photo-section">
+                <div class="section-header">
+                    <h2>📸 Foto de Perfil</h2>
+                </div>
+                
+                <div class="photo-container">
+                    <div class="photo-preview">
+                        <img id="fotoPreview" src="" alt="Foto de Perfil" style="display: none;">
+                        <div class="photo-placeholder" id="fotoPlaceholder">
+                            <span id="fotoInitials"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="photo-actions">
+                        <input type="file" id="fotoInput" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;">
+                        <button type="button" class="btn-upload" id="btnUploadFoto">
+                            📷 Escolher Foto
+                        </button>
+                        <button type="button" class="btn-remove" id="btnRemoverFoto" style="display: none;">
+                            🗑️ Remover Foto
+                        </button>
+                        <p class="photo-info">
+                            Formatos: JPG, PNG, WEBP • Máximo: 5MB
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🥋</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Graduação</span>
+                        <span class="stat-value" id="statGraduacao">-</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🥊</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Record MMA</span>
+                        <span class="stat-value" id="statRecordMMA">0-0-0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🤼</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Record BJJ</span>
+                        <span class="stat-value" id="statRecordBJJ">0-0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Membro desde</span>
+                        <span class="stat-value" id="statMembro">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Form -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>👤 Informações Pessoais</h2>
+                    <button class="btn-edit" id="editBtn" onclick="toggleEditMode()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar
+                    </button>
+                </div>
+
+                <form id="profileForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" disabled required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" disabled required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="idade">Idade</label>
+                            <input type="number" id="idade" disabled required min="1" max="120">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="graduacao">Graduação / Faixa</label>
+                            <select id="graduacao" disabled required>
+                                <option value="">Selecione...</option>
+                                <option value="Branca">Branca</option>
+                                <option value="Amarela">Amarela</option>
+                                <option value="Laranja">Laranja</option>
+                                <option value="Verde">Verde</option>
+                                <option value="Azul">Azul</option>
+                                <option value="Marrom">Marrom</option>
+                                <option value="Preta">Preta</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Carreira MMA -->
+                    <h3 class="subsection-title">🥊 Carreira de MMA</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mmaVitorias">Vitórias</label>
+                            <input type="number" id="mmaVitorias" disabled min="0" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mmaDerrotas">Derrotas</label>
+                            <input type="number" id="mmaDerrotas" disabled min="0" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mmaEmpates">Empates</label>
+                            <input type="number" id="mmaEmpates" disabled min="0" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mmaEspecialidade">Especialidade</label>
+                            <input type="text" id="mmaEspecialidade" disabled placeholder="Ex: Striking, Grappling">
+                        </div>
+                    </div>
+
+                    <!-- Carreira BJJ -->
+                    <h3 class="subsection-title">🥋 Carreira de BJJ</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bjjVitorias">Vitórias</label>
+                            <input type="number" id="bjjVitorias" disabled min="0" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bjjDerrotas">Derrotas</label>
+                            <input type="number" id="bjjDerrotas" disabled min="0" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bjjEspecialidade">Especialidade</label>
+                            <input type="text" id="bjjEspecialidade" disabled placeholder="Ex: Guard, Submissions">
+                        </div>
+                    </div>
+
+                    <!-- Outros Dados -->
+                    <h3 class="subsection-title">💪 Características Físicas</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="altura">Altura (m)</label>
+                            <input type="number" id="altura" disabled step="0.01" placeholder="Ex: 1.75">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="peso">Peso (kg)</label>
+                            <input type="number" id="peso" disabled step="0.1" placeholder="Ex: 70">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="alcance">Alcance (cm)</label>
+                            <input type="number" id="alcance" disabled placeholder="Ex: 180">
+                        </div>
+                    </div>
+
+                    <!-- Sobre -->
+                    <h3 class="subsection-title">📝 Sobre Mim</h3>
+                    <div class="form-group">
+                        <label for="sobre">Biografia / Descrição</label>
+                        <textarea id="sobre" disabled rows="5" placeholder="Conte um pouco sobre sua jornada nas artes marciais..."></textarea>
+                    </div>
+
+                    <div class="form-actions" id="formActions" style="display: none;">
+                        <button type="button" class="btn-secondary" onclick="cancelEdit()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            Guardar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Change Password Section -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>🔐 Segurança</h2>
+                </div>
+
+                <button class="btn-change-password" id="changePasswordBtn" onclick="openPasswordModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Alterar Palavra-Passe
+                </button>
+            </div>
+
+            <!-- Account Actions -->
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>⚙️ Ações da Conta</h2>
+                </div>
+
+                <div class="account-actions">
+                    <button class="btn-logout" onclick="logout()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Sair da Conta
+                    </button>
+                    <button class="btn-delete" onclick="confirmDeleteAccount()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Eliminar Conta
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePasswordModal()">&times;</span>
+            <h2>🔑 Alterar Palavra-Passe</h2>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="passAtual">Palavra-Passe Atual</label>
+                    <input type="password" id="passAtual" required>
+                </div>
+                <div class="form-group">
+                    <label for="novaPass">Nova Palavra-Passe</label>
+                    <input type="password" id="novaPass" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirmarNovaPass">Confirme a Nova Palavra-Passe</label>
+                    <input type="password" id="confirmarNovaPass" required>
+                </div>
+                <div class="error-message" id="passwordError"></div>
+                <button type="submit" class="modal-btn">Alterar Palavra-Passe</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSuccessModal()">&times;</span>
+            <div class="success-icon">✓</div>
+            <h2 id="successTitle">Sucesso!</h2>
+            <p id="successMessage">Operação realizada com sucesso.</p>
+            <button class="modal-btn" onclick="closeSuccessModal()">OK</button>
+        </div>
+    </div>
+
+    <!-- Modal de Crop de Imagem -->
+    <div id="cropModal" class="modal" style="display: none;">
+        <div class="modal-content crop-modal">
+            <span class="close-modal" id="closeCropModal">&times;</span>
+            <h2>📸 Recortar Imagem</h2>
+            
+            <div class="crop-container">
+                <div class="crop-preview-area">
+                    <img id="cropImage" src="" alt="Imagem para recortar">
+                    <div class="crop-overlay">
+                        <div class="crop-box" id="cropBox">
+                            <div class="crop-handle crop-nw"></div>
+                            <div class="crop-handle crop-ne"></div>
+                            <div class="crop-handle crop-sw"></div>
+                            <div class="crop-handle crop-se"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="crop-controls">
+                    <div class="crop-info">
+                        <p>📏 Arraste para posicionar • Use os cantos para redimensionar</p>
+                        <p id="cropSize">Tamanho: 300x300px</p>
+                    </div>
+                    
+                    <div class="crop-zoom">
+                        <label>🔍 Zoom:</label>
+                        <input type="range" id="cropZoom" min="100" max="300" value="100" step="10">
+                        <span id="zoomValue">100%</span>
+                    </div>
+                    
+                    <div class="crop-actions">
+                        <button type="button" class="btn-secondary" id="cancelCrop">Cancelar</button>
+                        <button type="button" class="btn-primary" id="confirmCrop">✓ Recortar e Enviar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <canvas id="cropCanvas" style="display: none;"></canvas>
+        </div>
+    </div>
+
+    <script src="script/perfil.js"></script>
+    <script src="script/photoCrop.js"></script>
+    <script src="routes/auth.js"></script>
+</body>
+</html>

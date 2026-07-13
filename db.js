@@ -1,334 +1,348 @@
 // ============================================
-// PAINEL SUPER ADMINISTRADOR - superadmin.js
+// SISTEMA DE CALENDÁRIO DE AULAS - ALUNO
 // ============================================
 
-console.log('✅ Script do painel Super Admin carregado!');
+const API_URL = 'http://localhost:3000/api';
+let token = localStorage.getItem('token');
+let todasAulas = [];
+let minhasInscricoes = [];
 
-let allAdmins = [];
-let statsData = {};
+// Dias da semana
+const DIAS_SEMANA = {
+    1: 'Segunda',
+    2: 'Terça',
+    3: 'Quarta',
+    4: 'Quinta',
+    5: 'Sexta',
+    6: 'Sábado',
+    7: 'Domingo'
+};
+
+// Horários (06:00 - 22:00)
+const HORA_INICIO = 6;
+const HORA_FIM = 22;
 
 // ============================================
-// VERIFICAR SE É SUPER ADMIN E ESTÁ LOGADO
+// INICIALIZAÇÃO
 // ============================================
 
-window.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    const utilizador = localStorage.getItem('utilizador');
-    
-    if (!token || !utilizador) {
-        alert('Precisa fazer login primeiro!');
+document.addEventListener('DOMContentLoaded', async () => {
+    // Verificar autenticação
+    if (!token) {
+        alert('Você precisa fazer login primeiro!');
         window.location.href = 'index.html';
         return;
     }
-    
-    try {
-        const user = JSON.parse(utilizador);
-        
-        // Verificar se é SUPER admin
-        if (!user.isSuperAdmin) {
-            alert('❌ Acesso negado! Apenas Super Administradores podem aceder a esta página.');
-            window.location.href = user.isAdmin ? 'Admin.html' : 'index.html';
-            return;
-        }
-        
-        // Mostrar nome do super admin
-        document.getElementById('adminName').textContent = user.nome;
-        
-        // Carregar dados
-        loadAdvancedStats();
-        loadAllAdmins();
-        loadLogs();
-        
-        // Setup tabs
-        setupTabs();
-        
-        console.log('👑 Super Admin logado:', user.nome);
-    } catch (e) {
-        console.error('Erro ao verificar super admin:', e);
-        localStorage.removeItem('token');
-        localStorage.removeItem('utilizador');
-        window.location.href = 'index.html';
-    }
+
+    // Carregar perfil
+    await carregarPerfil();
+
+    // Carregar aulas e inscrições
+    await carregarDados();
+
+    // Event listeners
+    document.getElementById('btnLogout').addEventListener('click', logout);
 });
 
 // ============================================
-// TABS SYSTEM
+// CARREGAR DADOS
 // ============================================
 
-function setupTabs() {
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tabName = btn.dataset.tab;
-            
-            // Remove active from all
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
-            
-            // Add active to clicked
-            btn.classList.add('active');
-            document.getElementById(tabName + '-tab').classList.add('active');
-            
-            // Load data for specific tab if needed
-            if (tabName === 'logs') {
-                loadLogs();
-            } else if (tabName === 'graduacoes') {
-                renderGraduacoesChart();
+async function carregarPerfil() {
+    try {
+        const response = await fetch(`${API_URL}/perfil`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Erro ao carregar perfil');
+
+        const data = await response.json();
+        document.getElementById('nomeUtilizador').textContent = `Olá, ${data.nome}`;
+    } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
+        alert('Sessão expirada. Faça login novamente.');
+        logout();
+    }
+}
+
+async function carregarDados() {
+    try {
+        // Buscar todas as aulas
+        const responseAulas = await fetch(`${API_URL}/aulas`);
+        if (!responseAulas.ok) throw new Error('Erro ao buscar aulas');
+        todasAulas = await responseAulas.json();
+
+        // Buscar minhas inscrições
+        const responseInscricoes = await fetch(`${API_URL}/minhas-inscricoes`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!responseInscricoes.ok) throw new Error('Erro ao buscar inscrições');
+        minhasInscricoes = await responseInscricoes.json();
+
+        // Renderizar
+        renderizarCalendario();
+        renderizarMinhasInscricoes();
+
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        mostrarMensagem('Erro ao carregar dados', 'erro');
+    }
+}
+
+// ============================================
+// RENDERIZAR CALENDÁRIO
+// ============================================
+
+function renderizarCalendario() {
+    const calendario = document.getElementById('calendario');
+    calendario.innerHTML = '';
+
+    // Header vazio (canto superior esquerdo)
+    const headerEmpty = document.createElement('div');
+    headerEmpty.className = 'cal-header cal-empty';
+    headerEmpty.textContent = 'Hora';
+    calendario.appendChild(headerEmpty);
+
+    // Headers dos dias
+    for (let dia = 1; dia <= 7; dia++) {
+        const headerDia = document.createElement('div');
+        headerDia.className = 'cal-header cal-dia';
+        headerDia.textContent = DIAS_SEMANA[dia];
+        calendario.appendChild(headerDia);
+    }
+
+    // Grid de horários
+    for (let hora = HORA_INICIO; hora <= HORA_FIM; hora++) {
+        // Coluna de hora
+        const cellHora = document.createElement('div');
+        cellHora.className = 'cal-hora';
+        cellHora.textContent = `${String(hora).padStart(2, '0')}:00`;
+        calendario.appendChild(cellHora);
+
+        // Slots para cada dia
+        for (let dia = 1; dia <= 7; dia++) {
+            const horaStr = `${String(hora).padStart(2, '0')}:00`;
+            const slot = document.createElement('div');
+            slot.className = 'cal-slot';
+
+            // Verificar se há aula neste horário
+            const aula = todasAulas.find(a => 
+                a.diaSemana === dia && a.hora === horaStr
+            );
+
+            if (aula) {
+                // Há uma aula neste horário
+                slot.classList.add('com-aula');
+                
+                // Verificar se estou inscrito
+                const inscrito = minhasInscricoes.some(i => i._id === aula._id);
+                if (inscrito) {
+                    slot.classList.add('inscrito');
+                }
+
+                // Verificar se está lotada
+                if (aula.vagasDisponiveis === 0 && !inscrito) {
+                    slot.classList.add('lotada');
+                }
+
+                // Conteúdo da aula
+                slot.innerHTML = `
+                    <div class="aula-nome">${aula.nome}</div>
+                    <div class="aula-professor">${aula.professor}</div>
+                    <div class="aula-vagas">${aula.alunosInscritos}/${aula.limiteAlunos}</div>
+                `;
+
+                // Click handler
+                slot.dataset.aulaId = aula._id;
+                slot.dataset.inscrito = inscrito;
+                slot.dataset.lotada = aula.vagasDisponiveis === 0 && !inscrito;
+                slot.addEventListener('click', () => handleAulaClick(aula, inscrito));
+            }
+
+            calendario.appendChild(slot);
+        }
+    }
+}
+
+// ============================================
+// CLICK NA AULA
+// ============================================
+
+async function handleAulaClick(aula, inscrito) {
+    if (aula.vagasDisponiveis === 0 && !inscrito) {
+        mostrarMensagem('Esta aula está lotada', 'erro');
+        return;
+    }
+
+    if (inscrito) {
+        // Desinscrever
+        await desinscrever(aula);
+    } else {
+        // Inscrever
+        await inscrever(aula);
+    }
+}
+
+async function inscrever(aula) {
+    const confirmar = await mostrarModal(
+        'Inscrever em Aula',
+        `
+            <strong>${aula.nome}</strong><br>
+            Professor: ${aula.professor}<br>
+            ${DIAS_SEMANA[aula.diaSemana]} às ${aula.hora}<br>
+            Vagas disponíveis: ${aula.vagasDisponiveis}/${aula.limiteAlunos}
+        `,
+        'Deseja se inscrever nesta aula?'
+    );
+
+    if (!confirmar) return;
+
+    try {
+        const response = await fetch(`${API_URL}/aulas/${aula._id}/inscrever`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.erro || 'Erro ao inscrever');
+        }
+
+        mostrarMensagem('✅ Inscrição realizada com sucesso!', 'sucesso');
+        await carregarDados();
+
+    } catch (error) {
+        console.error('Erro ao inscrever:', error);
+        mostrarMensagem(error.message, 'erro');
+    }
+}
+
+async function desinscrever(aula) {
+    const confirmar = await mostrarModal(
+        'Cancelar Inscrição',
+        `
+            <strong>${aula.nome}</strong><br>
+            Professor: ${aula.professor}<br>
+            ${DIAS_SEMANA[aula.diaSemana]} às ${aula.hora}
+        `,
+        'Deseja cancelar sua inscrição?'
+    );
+
+    if (!confirmar) return;
+
+    try {
+        const response = await fetch(`${API_URL}/aulas/${aula._id}/desinscrever`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.erro || 'Erro ao desinscrever');
+        }
+
+        mostrarMensagem('Inscrição cancelada', 'sucesso');
+        await carregarDados();
+
+    } catch (error) {
+        console.error('Erro ao desinscrever:', error);
+        mostrarMensagem(error.message, 'erro');
+    }
+}
+
+// ============================================
+// MINHAS INSCRIÇÕES
+// ============================================
+
+function renderizarMinhasInscricoes() {
+    const lista = document.getElementById('minhasInscricoesList');
+
+    if (minhasInscricoes.length === 0) {
+        lista.innerHTML = '<p class="vazio">Você não está inscrito em nenhuma aula</p>';
+        return;
+    }
+
+    // Ordenar por dia e hora
+    const inscricoesOrdenadas = [...minhasInscricoes].sort((a, b) => {
+        if (a.diaSemana !== b.diaSemana) return a.diaSemana - b.diaSemana;
+        return a.hora.localeCompare(b.hora);
+    });
+
+    lista.innerHTML = inscricoesOrdenadas.map(aula => `
+        <div class="inscricao-card">
+            <div class="inscricao-info">
+                <div class="inscricao-nome">${aula.nome}</div>
+                <div class="inscricao-details">
+                    <span>📅 ${DIAS_SEMANA[aula.diaSemana]}</span>
+                    <span>🕐 ${aula.hora}</span>
+                    <span>👨‍🏫 ${aula.professor}</span>
+                </div>
+            </div>
+            <button class="btn-cancelar-inscricao" data-id="${aula._id}">
+                Cancelar
+            </button>
+        </div>
+    `).join('');
+
+    // Event listeners
+    lista.querySelectorAll('.btn-cancelar-inscricao').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const aula = minhasInscricoes.find(a => a._id === btn.dataset.id);
+            if (aula) {
+                await desinscrever(aula);
             }
         });
     });
 }
 
 // ============================================
-// CARREGAR ESTATÍSTICAS AVANÇADAS
+// MODAL
 // ============================================
 
-async function loadAdvancedStats() {
-    const token = localStorage.getItem('token');
-    
-    try {
-        const response = await fetch('/api/superadmin/stats-avancadas', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (response.ok) {
-            statsData = await response.json();
-            
-            document.getElementById('totalUtilizadores').textContent = statsData.totalUtilizadores;
-            document.getElementById('totalAdmins').textContent = statsData.totalAdmins;
-            document.getElementById('totalSuperAdmins').textContent = statsData.totalSuperAdmins;
-            document.getElementById('novosUltimos7Dias').textContent = statsData.novosUltimos7Dias;
-            document.getElementById('adminsAutomaticos').textContent = statsData.adminsAutomaticos;
-            document.getElementById('totalNormais').textContent = statsData.totalNormais;
-            
-            console.log('📊 Estatísticas avançadas:', statsData);
-        } else {
-            console.error('Erro ao carregar estatísticas');
+function mostrarModal(titulo, details, mensagem) {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('modalConfirm');
+        document.getElementById('modalTitle').textContent = titulo;
+        document.getElementById('modalDetails').innerHTML = details;
+        document.getElementById('modalMessage').textContent = mensagem;
+
+        modal.style.display = 'flex';
+
+        const btnConfirmar = document.getElementById('btnConfirmar');
+        const btnCancelar = document.getElementById('btnCancelar');
+
+        function fechar(resultado) {
+            modal.style.display = 'none';
+            btnConfirmar.onclick = null;
+            btnCancelar.onclick = null;
+            resolve(resultado);
         }
-    } catch (error) {
-        console.error('Erro:', error);
-    }
+
+        btnConfirmar.onclick = () => fechar(true);
+        btnCancelar.onclick = () => fechar(false);
+    });
 }
 
 // ============================================
-// CARREGAR TODOS OS ADMINS
+// UTILITÁRIOS
 // ============================================
 
-async function loadAllAdmins() {
-    const token = localStorage.getItem('token');
-    const tbody = document.getElementById('adminsTableBody');
-    
-    tbody.innerHTML = '<tr><td colspan="6" class="loading-row">Carregando administradores...</td></tr>';
-    
-    try {
-        const response = await fetch('/api/superadmin/admins', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (response.ok) {
-            allAdmins = await response.json();
-            renderAdmins(allAdmins);
-            console.log('👨‍💼 Admins carregados:', allAdmins.length);
-        } else {
-            tbody.innerHTML = '<tr><td colspan="6" class="error-row">Erro ao carregar administradores</td></tr>';
-        }
-    } catch (error) {
-        console.error('Erro:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="error-row">Erro de conexão</td></tr>';
-    }
+function mostrarMensagem(texto, tipo) {
+    const msg = document.createElement('div');
+    msg.className = `mensagem mensagem-${tipo}`;
+    msg.textContent = texto;
+    document.body.appendChild(msg);
+
+    setTimeout(() => msg.remove(), 3000);
 }
-
-// ============================================
-// RENDERIZAR TABELA DE ADMINS
-// ============================================
-
-function renderAdmins(admins) {
-    const tbody = document.getElementById('adminsTableBody');
-    
-    if (admins.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-row">Nenhum administrador encontrado</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = admins.map(admin => {
-        const dataRegistro = new Date(admin.criado_em).toLocaleDateString('pt-PT');
-        const tipoAdmin = admin.isSuperAdmin ? '👑 Super Admin' : '👨‍💼 Admin';
-        const tipoClass = admin.isSuperAdmin ? 'super-admin-badge' : 'admin-badge';
-        
-        return `
-            <tr>
-                <td><strong>${admin.nome}</strong></td>
-                <td>${admin.email}</td>
-                <td><span class="badge-graduacao">${admin.graduacao}</span></td>
-                <td><span class="${tipoClass}">${tipoAdmin}</span></td>
-                <td>${dataRegistro}</td>
-                <td class="actions-cell">
-                    <button 
-                        class="btn-action btn-superadmin" 
-                        onclick="toggleSuperAdmin('${admin.id}', ${!admin.isSuperAdmin}, '${admin.nome}')" 
-                        title="${admin.isSuperAdmin ? 'Remover Super Admin' : 'Promover a Super Admin'}">
-                        ${admin.isSuperAdmin ? '👤' : '👑'}
-                    </button>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-// ============================================
-// PROMOVER/REMOVER SUPER ADMIN
-// ============================================
-
-async function toggleSuperAdmin(userId, makeSuperAdmin, userName) {
-    const action = makeSuperAdmin ? 'promover a Super Administrador' : 'remover privilégios de Super Admin';
-    
-    if (!confirm(`Deseja realmente ${action} o utilizador ${userName}?`)) {
-        return;
-    }
-    
-    const token = localStorage.getItem('token');
-    
-    try {
-        const response = await fetch(`/api/superadmin/tornar-superadmin/${userId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ isSuperAdmin: makeSuperAdmin })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            showSuccess('Permissões Alteradas!', data.mensagem);
-            loadAllAdmins();
-            loadAdvancedStats();
-        } else {
-            alert('Erro: ' + (data.erro || 'Erro ao alterar permissões'));
-        }
-    } catch (error) {
-        console.error('Erro:', error);
-        alert('Erro de conexão');
-    }
-}
-
-// ============================================
-// CARREGAR LOGS
-// ============================================
-
-async function loadLogs() {
-    const token = localStorage.getItem('token');
-    const tbody = document.getElementById('logsTableBody');
-    
-    tbody.innerHTML = '<tr><td colspan="6" class="loading-row">Carregando logs...</td></tr>';
-    
-    try {
-        const response = await fetch('/api/superadmin/logs', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            renderLogs(data.logs);
-            console.log('📜 Logs carregados:', data.logs.length);
-        } else {
-            tbody.innerHTML = '<tr><td colspan="6" class="error-row">Erro ao carregar logs</td></tr>';
-        }
-    } catch (error) {
-        console.error('Erro:', error);
-        tbody.innerHTML = '<tr><td colspan="6" class="error-row">Erro de conexão</td></tr>';
-    }
-}
-
-// ============================================
-// RENDERIZAR LOGS
-// ============================================
-
-function renderLogs(logs) {
-    const tbody = document.getElementById('logsTableBody');
-    
-    if (logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-row">Nenhum log encontrado</td></tr>';
-        return;
-    }
-    
-    tbody.innerHTML = logs.map(log => {
-        const dataFormatada = new Date(log.data).toLocaleString('pt-PT');
-        const adminStatus = log.isAdmin ? '✅ Sim' : 'Não';
-        
-        return `
-            <tr>
-                <td><span class="log-tipo">${log.tipo}</span></td>
-                <td>${log.utilizador}</td>
-                <td>${log.email}</td>
-                <td><span class="badge-graduacao">${log.graduacao}</span></td>
-                <td>${adminStatus}</td>
-                <td>${dataFormatada}</td>
-            </tr>
-        `;
-    }).join('');
-}
-
-// ============================================
-// RENDER GRADUAÇÕES CHART
-// ============================================
-
-function renderGraduacoesChart() {
-    if (!statsData.porGraduacao || statsData.porGraduacao.length === 0) {
-        document.getElementById('graduacoesChart').innerHTML = '<p>Sem dados disponíveis</p>';
-        return;
-    }
-    
-    const container = document.getElementById('graduacoesChart');
-    const maxCount = Math.max(...statsData.porGraduacao.map(g => g.count));
-    
-    const html = statsData.porGraduacao.map(grad => {
-        const percentage = (grad.count / maxCount) * 100;
-        const isAdmin = grad._id === 'Preta' || grad._id === 'Castanho (Marrom)';
-        const adminLabel = isAdmin ? ' ⚡ (Admin Automático)' : '';
-        const barClass = isAdmin ? 'bar-admin' : 'bar-normal';
-        
-        return `
-            <div class="chart-row">
-                <div class="chart-label">${grad._id}${adminLabel}</div>
-                <div class="chart-bar-container">
-                    <div class="chart-bar ${barClass}" style="width: ${percentage}%"></div>
-                    <span class="chart-value">${grad.count}</span>
-                </div>
-            </div>
-        `;
-    }).join('');
-    
-    container.innerHTML = html;
-}
-
-// ============================================
-// SUCCESS MODAL
-// ============================================
-
-function showSuccess(title, message) {
-    document.getElementById('successTitle').textContent = title;
-    document.getElementById('successMessage').textContent = message;
-    document.getElementById('successModal').style.display = 'flex';
-}
-
-function closeSuccessModal() {
-    document.getElementById('successModal').style.display = 'none';
-}
-
-// ============================================
-// LOGOUT
-// ============================================
 
 function logout() {
-    if (confirm('Deseja realmente sair do painel Super Admin?')) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('utilizador');
-        window.location.href = 'index.html';
-    }
+    localStorage.removeItem('token');
+    window.location.href = 'index.html';
 }
-
-console.log('✅ Script do painel Super Admin totalmente carregado!');

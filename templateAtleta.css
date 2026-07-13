@@ -1,797 +1,276 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Arial', sans-serif;
-  background: #0a0a0a;
-  color: #fff;
-  overflow-x: hidden;
-  min-height: 100vh;
-}
-
-/* Header */
-header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(10, 10, 10, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 1.5rem 5%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
-  border-bottom: 1px solid rgba(216, 31, 38, 0.3);
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-header img {
-  max-width: 150px;
-  transition: transform 0.3s ease;
-}
-
-header img:hover {
-  transform: scale(1.05);
-}
-
-ul.breadcrumb {
-  list-style: none;
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin: 0;
-  padding: 0;
-}
-
-ul.breadcrumb li {
-  display: inline;
-  font-size: 0.9rem;
-  color: #aaa;
-}
-
-ul.breadcrumb li+li:before {
-  padding: 0 8px;
-  color: #d81f26;
-  content: "/\00a0";
-}
-
-ul.breadcrumb li a {
-  color: #d81f26;
-  text-decoration: none;
-  transition: all 0.3s;
-  position: relative;
-  font-weight: 500;
-}
-
-ul.breadcrumb li a:hover {
-  color: #1fa036;
-}
-
-/* Main Content */
-main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 120px 5% 60px;
-}
-
-.profile-container {
-  background: #141414;
-  border: 1px solid rgba(216, 31, 38, 0.3);
-  border-radius: 20px;
-  padding: 3rem;
-  animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Profile Header */
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(216, 31, 38, 0.1);
-}
-
-.profile-avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: #d81f26;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  font-weight: bold;
-  color: #fff;
-  flex-shrink: 0;
-  box-shadow: 0 10px 30px rgba(216, 31, 38, 0.3);
-}
-
-.profile-info {
-  flex: 1;
-}
-
-.profile-info h1 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  background: #d81f26;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.profile-email {
-  color: #aaa;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-}
-
-.profile-badge {
-  display: inline-block;
-  padding: 0.4rem 1rem;
-  background: rgba(216, 31, 38, 0.1);
-  border: 1px solid #d81f26;
-  border-radius: 20px;
-  color: #d81f26;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(216, 31, 38, 0.2);
-  border-radius: 15px;
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: all 0.3s;
-}
-
-.stat-card:hover {
-  background: rgba(216, 31, 38, 0.05);
-  border-color: #d81f26;
-  transform: translateY(-3px);
-}
-
-.stat-icon {
-  font-size: 2rem;
-}
-
-.stat-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-label {
-  color: #aaa;
-  font-size: 0.85rem;
-  margin-bottom: 0.25rem;
-}
-
-.stat-value {
-  color: #d81f26;
-  font-size: 1.3rem;
-  font-weight: 600;
-}
-
-/* Profile Sections */
-.profile-section {
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(216, 31, 38, 0.1);
-}
-
-.profile-section:last-child {
-  border-bottom: none;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.section-header h2 {
-  font-size: 1.5rem;
-  color: #d81f26;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.subsection-title {
-  font-size: 1.2rem;
-  color: #d81f26;
-  margin: 2rem 0 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(216, 31, 38, 0.2);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Form */
-.form-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  color: #aaa;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 0.9rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(216, 31, 38, 0.2);
-  border-radius: 10px;
-  color: #fff;
-  font-size: 1rem;
-  font-family: 'Arial', sans-serif;
-  transition: all 0.3s;
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.6;
-}
-
-.form-group input:disabled,
-.form-group select:disabled,
-.form-group textarea:disabled {
-  background: rgba(255, 255, 255, 0.02);
-  cursor: not-allowed;
-  color: #999;
-}
-
-.form-group input:not(:disabled):focus,
-.form-group select:not(:disabled):focus,
-.form-group textarea:not(:disabled):focus {
-  outline: none;
-  border-color: #d81f26;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 3px rgba(216, 31, 38, 0.1);
-}
-
-.form-group select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2322c55e' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
-}
-
-.form-group select option {
-  background: #1a1a1a;
-  color: #fff;
-}
-
-/* Buttons */
-.btn-edit,
-.btn-change-password,
-.btn-logout,
-.btn-delete {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1.5rem;
-  border: none;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.btn-edit {
-  background: rgba(216, 31, 38, 0.1);
-  color: #d81f26;
-  border: 1px solid #d81f26;
-}
-
-.btn-edit:hover {
-  background: rgba(216, 31, 38, 0.2);
-}
-
-.btn-change-password {
-  width: 100%;
-  background: rgba(216, 31, 38, 0.1);
-  color: #d81f26;
-  border: 1px solid #d81f26;
-}
-
-.btn-change-password:hover {
-  background: rgba(216, 31, 38, 0.2);
-}
-
-.btn-logout {
-  background: rgba(255, 193, 7, 0.1);
-  color: #ffc107;
-  border: 1px solid #ffc107;
-}
-
-.btn-logout:hover {
-  background: rgba(255, 193, 7, 0.2);
-}
-
-.btn-delete {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid #ef4444;
-}
-
-.btn-delete:hover {
-  background: rgba(239, 68, 68, 0.2);
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(216, 31, 38, 0.1);
-}
-
-.btn-primary,
-.btn-secondary {
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.btn-primary {
-  background: #d81f26;
-  color: #fff;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(216, 31, 38, 0.4);
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: #aaa;
-  border: 1px solid rgba(216, 31, 38, 0.2);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border-color: #d81f26;
-}
-
-/* Account Actions */
-.account-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Modal */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(5px);
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  animation: fadeIn 0.3s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.modal-content {
-  background: #141414;
-  padding: 3rem;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 450px;
-  border: 1px solid rgba(216, 31, 38, 0.3);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  animation: modalSlideUp 0.3s;
-  position: relative;
-}
-
-@keyframes modalSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.close-modal {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 2rem;
-  cursor: pointer;
-  color: #999;
-  background: none;
-  border: none;
-  transition: color 0.3s;
-}
-
-.close-modal:hover {
-  color: #d81f26;
-}
-
-.modal-content h2 {
-  color: #d81f26;
-  margin-bottom: 1.5rem;
-  font-size: 1.8rem;
-  text-align: center;
-}
-
-.modal-btn {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 10px;
-  border: none;
-  font-weight: 600;
-  background: #d81f26;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 1rem;
-}
-
-.modal-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(216, 31, 38, 0.4);
-}
-
-.success-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 1.5rem;
-  background: #d81f26;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: #fff;
-  animation: scaleIn 0.5s ease-out 0.2s backwards;
-}
-
-@keyframes scaleIn {
-  from { transform: scale(0); }
-  to { transform: scale(1); }
-}
-
-.modal-content p {
-  color: #aaa;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.error-message {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #ef4444;
-  padding: 0.8rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  display: none;
-  font-size: 0.9rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  main {
-    padding: 150px 5% 40px;
-  }
-
-  .profile-container {
-    padding: 2rem;
-  }
-
-  .profile-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .profile-info h1 {
-    font-size: 1.8rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-  }
-
-  .modal-content {
-    padding: 2rem;
-    width: 95%;
-  }
-}
-
-@media (max-width: 480px) {
-  main {
-    padding: 140px 3% 30px;
-  }
-
-  .profile-container {
-    padding: 1.5rem;
-  }
-
-  .profile-avatar {
-    width: 100px;
-    height: 100px;
-    font-size: 2.5rem;
-  }
-
-  .profile-info h1 {
-    font-size: 1.5rem;
-  }
-
-  header img {
-    max-width: 120px;
-  }
-}
-
-/* ============================================
-   SEÇÃO DE FOTO DE PERFIL
-   ============================================ */
-
-.photo-section {
-    margin-bottom: 2rem;
-}
-
-.photo-container {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 1.5rem;
-}
-
-.photo-preview {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    flex-shrink: 0;
-}
-
-.photo-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 3px solid #1fa036;
-    box-shadow: 0 4px 12px rgba(31, 160, 54, 0.3);
-}
-
-.photo-placeholder {
-    width: 100%;
-    height: 100%;
-    background: #1fa036;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 4rem;
-    font-weight: 700;
-    color: white;
-    border: 3px solid #1fa036;
-    box-shadow: 0 4px 12px rgba(31, 160, 54, 0.3);
-}
-
-.photo-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.btn-upload,
-.btn-remove {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.btn-upload {
-    background: #1fa036;
-    color: white;
-    box-shadow: 0 4px 12px rgba(31, 160, 54, 0.3);
-}
-
-.btn-upload:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(31, 160, 54, 0.4);
-}
-
-.btn-upload:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.btn-remove {
-    background: #dc2626;
-    color: white;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
-.btn-remove:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-}
-
-.btn-remove:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.photo-info {
-    font-size: 0.875rem;
-    color: #aaa;
-    margin: 0;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .photo-container {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .photo-preview {
-        width: 150px;
-        height: 150px;
-    }
-    
-    .photo-placeholder {
-        font-size: 3rem;
-    }
-    
-    .photo-actions {
-        width: 100%;
-    }
-    
-    .btn-upload,
-    .btn-remove {
-        width: 100%;
-    }
-}
-
-/* ============================================
-   QUICK LINKS SECTION
-   ============================================ */
-
-.quick-links-section {
-    margin: 30px 0;
-}
-
-.quick-links-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 30px;
-}
-
-.quick-link-card {
-    background: #2d2d2d;
-    border: 2px solid #404040;
-    border-radius: 12px;
-    padding: 20px;
-    text-decoration: none;
-    transition: all 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.quick-link-card:hover {
-    border-color: #1fa036;
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(31, 160, 54, 0.3);
-}
-
-.quick-link-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-}
-
-.quick-link-title {
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 6px;
-}
-
-.quick-link-desc {
-    color: #9ca3af;
-    font-size: 13px;
-}
-
-@media (max-width: 768px) {
-    .quick-links-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-}
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <script>(function(){try{var t=localStorage.getItem('pft-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pavia Fight Team &mdash; Desportos de Combate | Montijo</title>
+    <meta name="description" content="Pavia Fight Team - academia de Jiu-Jitsu, Ju-Jutsu, Krav Maga e Karate no Montijo, liderada pelo campeao europeu Joao Pavia. Marca a tua aula experimental gratuita.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/indexcss.css">
+    <link rel="shortcut icon" href="media/pft-logo.svg" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <img src="media/pft-logo.svg" alt="Pavia Fight Team">
+            <span class="logo-text"><strong>Pavia Fight Team</strong><small>Montijo &middot; Desportos de Combate</small></span>
+        </a>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        <nav id="mainNav">
+            <a href="#home">Inicio</a>
+            <a href="#classes">Modalidades</a>
+            <a href="#coach">Treinador</a>
+            <a href="#horario">Horario</a>
+            <a href="Atletas.html">Atletas</a>
+            <a href="#contact">Contacto</a>
+            <a href="Perfil.html" id="perfilLink" style="display: none;">Perfil</a>
+            <a href="Admin.html" id="adminLink" style="display: none; color: #fbbf24;">Admin</a>
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema claro/escuro" title="Tema claro/escuro"><span class="theme-icon">&#9789;</span></button>
+            <button class="auth-button" id="loginBtn">Entrar / Criar Conta</button>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span class="user-name" id="userName"></span>
+                <button class="logout-btn" id="logoutBtn">Sair</button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="modal" id="authModal" style="display: none;">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <h2 class="modal-title">Bem-vindo a Familia!</h2>
+            <p class="modal-subtitle">Entre ou crie a sua conta para comecar</p>
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="login">Entrar</button>
+                <button class="tab-btn" data-tab="registo">Criar Conta</button>
+            </div>
+            <div class="error-message" id="errorMessage" style="display: none;"></div>
+            <div class="success-message" id="successMessage" style="display: none;"></div>
+            <form class="auth-form active" id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required placeholder="seu@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPass">Palavra-passe</label>
+                    <input type="password" id="loginPass" name="pass" required placeholder="******" autocomplete="current-password">
+                </div>
+                <button type="submit" class="submit-btn" id="loginSubmitBtn">Entrar</button>
+                <div class="loading" id="loginLoading" style="display: none;">Processando...</div>
+            </form>
+            <form class="auth-form" id="registoForm">
+                <div class="form-group">
+                    <label for="registoNome">Nome Completo</label>
+                    <input type="text" id="registoNome" name="nome" required placeholder="Digite o seu nome" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="registoIdade">Idade</label>
+                    <input type="number" id="registoIdade" name="idade" required min="5" max="120" placeholder="A sua idade">
+                </div>
+                <div class="form-group">
+                    <label for="registoEmail">Email</label>
+                    <input type="email" id="registoEmail" name="email" required placeholder="seu@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="registoPass">Palavra-passe</label>
+                    <input type="password" id="registoPass" name="pass" required minlength="6" placeholder="Minimo 6 caracteres" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="registoConfirmarPass">Confirmar Palavra-passe</label>
+                    <input type="password" id="registoConfirmarPass" name="confirmarPass" required minlength="6" placeholder="Digite novamente" autocomplete="new-password">
+                </div>
+                <button type="submit" class="submit-btn" id="registoSubmitBtn">Criar Conta</button>
+                <div class="loading" id="registoLoading" style="display: none;">Processando...</div>
+            </form>
+        </div>
+    </div>
+
+    <section id="home" class="hero">
+        <div class="hero-slideshow">
+            <div class="slide active" style="background-image: url('media/slideshow/slide1.jpeg')"></div>
+            <div class="slide" style="background-image: url('media/slideshow/slide1.jpeg')"></div>
+            <div class="slide" style="background-image: url('media/slideshow/slide2.jpeg')"></div>
+            <div class="slide" style="background-image: url('media/slideshow/slide3.jpeg')"></div>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-eyebrow">Montijo &middot; Portugal</span>
+            <h1><img src="media/pft-branco.svg" alt="Pavia Fight Team"></h1>
+            <div class="subtitle">Jiu-Jitsu &middot; Ju-Jutsu &middot; Krav Maga &middot; Karate</div>
+            <p>Academia de desportos de combate liderada pelo campeao europeu Joao Pavia. Treino de alta performance para todos os niveis, num ambiente de disciplina, respeito e verdadeiro espirito de equipa.</p>
+            <div class="hero-cta">
+                <a href="#contact" class="cta-button">Aula Experimental Gratuita</a>
+                <a href="https://wa.me/351963844433" class="cta-button cta-outline" target="_blank" rel="noopener">Falar por WhatsApp</a>
+            </div>
+        </div>
+        <div class="slide-indicators">
+            <span class="indicator active" data-slide="0"></span>
+            <span class="indicator" data-slide="1"></span>
+            <span class="indicator" data-slide="2"></span>
+            <span class="indicator" data-slide="3"></span>
+        </div>
+    </section>
+
+    <section id="sobre" class="about">
+        <div class="about-inner">
+            <div class="about-text">
+                <span class="eyebrow">A Equipa</span>
+                <h2>Mais do que uma academia, uma familia</h2>
+                <p>A Pavia Fight Team nasceu no Montijo com uma missao simples: formar praticantes completos, dentro e fora do tatame. Do primeiro dia de iniciante ao podio internacional, cada atleta e acompanhado de perto num ambiente exigente mas acolhedor.</p>
+                <p>Treinamos Jiu-Jitsu, Ju-Jutsu Tradicional, Krav Maga e Karate para criancas, jovens e adultos - desde a defesa pessoal ao alto rendimento competitivo.</p>
+                <a href="#contact" class="link-arrow">Marca a tua aula experimental &rarr;</a>
+            </div>
+            <div class="stats-grid">
+                <div class="stat"><span class="stat-num">20+</span><span class="stat-label">Anos de experiencia</span></div>
+                <div class="stat"><span class="stat-num">4</span><span class="stat-label">Modalidades</span></div>
+                <div class="stat"><span class="stat-num">1x</span><span class="stat-label">Campeao Europeu</span></div>
+                <div class="stat"><span class="stat-num">Todos</span><span class="stat-label">Os niveis e idades</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="classes" class="classes">
+        <h2 class="section-title">As Nossas Modalidades</h2>
+        <div class="classes-grid">
+            <div class="class-card">
+                <h3>Brazilian Jiu-Jitsu</h3>
+                <p>A arte suave que ensina tecnicas de defesa pessoal, controlo e finalizacoes no solo.</p>
+                <ul><li>Gi e No-Gi</li><li>Todos os niveis</li><li>Competicoes regulares</li><li>Graduacao oficial</li></ul>
+            </div>
+            <div class="class-card">
+                <h3>Ju-Jutsu Tradicional</h3>
+                <p>A arte marcial tradicional japonesa focada em projecoes, controlo e defesa pessoal completa.</p>
+                <ul><li>Tecnica tradicional</li><li>Defesa pessoal real</li><li>Disciplina e respeito</li><li>Graduacao por faixas</li></ul>
+            </div>
+            <div class="class-card">
+                <h3>Kapap / Krav Maga</h3>
+                <p>Sistema de defesa pessoal e combate corpo-a-corpo de origem israelita, direto e eficaz.</p>
+                <ul><li>Defesa pessoal pratica</li><li>Resposta a agressoes reais</li><li>Condicionamento fisico</li><li>Todos os niveis</li></ul>
+            </div>
+            <div class="class-card">
+                <h3>Karate</h3>
+                <p>A base do striking tradicional, trabalhando tecnica, velocidade, foco e autocontrolo.</p>
+                <ul><li>Shotokan e Goju Ryu</li><li>Kata e Kumite</li><li>Criancas e adultos</li><li>Graduacao oficial</li></ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="coach" class="coach">
+        <h2 class="section-title">O Nosso Treinador</h2>
+        <div class="coach-card">
+            <div class="coach-badge">Faixa Preta &middot; Campeao Europeu</div>
+            <h3>Joao Pavia</h3>
+            <p class="coach-role">Fundador e Treinador Principal</p>
+            <p>Agente da PSP e praticante de artes marciais desde os 3 anos, Joao Pavia e o rosto da Pavia Fight Team. Campeao Europeu de Jiu-Jitsu ISBJJ (-82&nbsp;kg, Coimbra 2019/2024) e varias vezes campeao nacional, acumula titulos nacionais e internacionais em diversas modalidades de desportos de combate.</p>
+            <div class="coach-creds">
+                <span>Jiu-Jitsu Brasileiro &mdash; Faixa Roxa</span>
+                <span>Karate Shotokan &mdash; Faixa Preta</span>
+                <span>Karate Goju Ryu &mdash; Faixa Preta</span>
+                <span>Ju-Jutsu Tradicional &mdash; Faixa Preta</span>
+                <span>Kapap / Krav Maga &mdash; Instrutor</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="benefits" class="benefits">
+        <h2 class="section-title">Porque Treinar Connosco?</h2>
+        <div class="benefits-grid">
+            <div class="benefit-item"><div class="benefit-icon">&#9733;</div><h3>Instrutores Faixa Preta</h3><p>Equipa de professores com vasta experiencia em competicoes e ensino.</p></div>
+            <div class="benefit-item"><div class="benefit-icon">&#127919;</div><h3>Treino Personalizado</h3><p>Acompanhamento individual para atingir os seus objetivos especificos.</p></div>
+            <div class="benefit-item"><div class="benefit-icon">&#127942;</div><h3>Infraestrutura de Topo</h3><p>Tatames profissionais, vestiarios completos e equipamentos de primeira.</p></div>
+            <div class="benefit-item"><div class="benefit-icon">&#129309;</div><h3>Comunidade Forte</h3><p>Faca parte de uma familia que se apoia e evolui em conjunto.</p></div>
+        </div>
+    </section>
+
+    <section id="horario" class="schedule">
+        <h2 class="section-title">Horario Semanal</h2>
+        <p class="section-lead">Treinos para todas as idades e niveis. Horario indicativo - confirma a tua turma pelo WhatsApp.</p>
+        <div class="schedule-wrap">
+            <table class="schedule-table">
+                <thead><tr><th>Dia</th><th>18h00 - 19h30</th><th>19h30 - 21h00</th></tr></thead>
+                <tbody>
+                    <tr><td>Segunda</td><td><span class="tag tag-red">Jiu-Jitsu</span></td><td><span class="tag tag-green">Krav Maga</span></td></tr>
+                    <tr><td>Terca</td><td><span class="tag tag-green">Karate</span></td><td><span class="tag tag-red">Ju-Jutsu</span></td></tr>
+                    <tr><td>Quarta</td><td><span class="tag tag-red">Jiu-Jitsu</span></td><td><span class="tag tag-green">Krav Maga</span></td></tr>
+                    <tr><td>Quinta</td><td><span class="tag tag-green">Karate</span></td><td><span class="tag tag-red">Ju-Jutsu</span></td></tr>
+                    <tr><td>Sexta</td><td><span class="tag tag-red">Jiu-Jitsu No-Gi</span></td><td><span class="tag tag-green">Open Mat</span></td></tr>
+                    <tr><td>Sabado</td><td colspan="2"><span class="tag tag-red">Jiu-Jitsu Kids</span> &nbsp; <span class="tag tag-green">Competicao</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2 class="section-title">Entre em Contacto</h2>
+        <p class="section-lead">Marca a tua aula experimental gratuita e descobre o poder dos desportos de combate.</p>
+        <div class="contact-layout">
+            <div class="contact-cards">
+                <div class="contact-item"><h3>Morada</h3><p>R. Luis Calado Nunes 20A<br>2870-350 Montijo, Portugal</p></div>
+                <div class="contact-item"><h3>Telefone / WhatsApp</h3><p><a href="https://wa.me/351963844433">+351 963 844 433</a></p></div>
+                <div class="contact-item"><h3>Email</h3><p><a href="mailto:geral@paviafightteam.pt">geral@paviafightteam.pt</a></p></div>
+                <div class="contact-item"><h3>Horario</h3><p>Segunda a Sexta: 18h - 21h<br>Sabado: manha</p></div>
+            </div>
+            <div class="contact-map">
+                <iframe title="Mapa - Pavia Fight Team, Montijo" src="https://www.google.com/maps?q=R.%20Luis%20Calado%20Nunes%2020A%2C%202870-350%20Montijo&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+        <a href="https://wa.me/351963844433" target="_blank" rel="noopener" class="cta-button" style="margin-top: 2.5rem;">Comeca a Tua Jornada Hoje</a>
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <img src="media/pft-logo.svg" alt="Pavia Fight Team">
+                <div><strong>Pavia Fight Team</strong><span>Desportos de Combate &middot; Montijo</span></div>
+            </div>
+            <nav class="footer-links">
+                <a href="#sobre">A Equipa</a>
+                <a href="#classes">Modalidades</a>
+                <a href="#coach">Treinador</a>
+                <a href="#horario">Horario</a>
+                <a href="Atletas.html">Atletas</a>
+                <a href="#contact">Contacto</a>
+            </nav>
+            <div class="footer-social">
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+                <a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a>
+                <a href="https://wa.me/351963844433" target="_blank" rel="noopener">WhatsApp</a>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2026 Pavia Fight Team &mdash; Todos os direitos reservados.</p></div>
+    </footer>
+
+    <script>
+    (function(){
+        var navToggle=document.getElementById('navToggle'), nav=document.getElementById('mainNav');
+        if(navToggle&&nav){
+            navToggle.addEventListener('click',function(){
+                var open=nav.classList.toggle('open');
+                navToggle.classList.toggle('is-open',open);
+                navToggle.setAttribute('aria-expanded',open?'true':'false');
+            });
+            nav.querySelectorAll('a').forEach(function(a){
+                a.addEventListener('click',function(){
+                    nav.classList.remove('open');
+                    navToggle.classList.remove('is-open');
+                    navToggle.setAttribute('aria-expanded','false');
+                });
+            });
+        }
+        var root=document.documentElement, btn=document.getElementById('themeToggle');
+        function icon(){var l=root.getAttribute('data-theme')==='light';var s=btn&&btn.querySelector('.theme-icon');if(s)s.innerHTML=l?'&#9788;':'&#9789;';}
+        icon();
+        if(btn)btn.addEventListener('click',function(){
+            var light=root.getAttribute('data-theme')==='light';
+            if(light){root.removeAttribute('data-theme');try{localStorage.setItem('pft-theme','dark');}catch(e){}}
+            else{root.setAttribute('data-theme','light');try{localStorage.setItem('pft-theme','light');}catch(e){}}
+            icon();
+        });
+    })();
+    </script>
+    <script src="routes/auth.js"></script>
+    <script src="script/index.js"></script>
+</body>
+</html>

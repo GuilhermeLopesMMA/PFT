@@ -1,148 +1,71 @@
-const mongoose = require("mongoose");
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensalidades - PFT</title>
+    <link rel="stylesheet" href="css/styleMensalidades.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>💰Mensalidades</h1>
+                <div class="header-nav">
+                    <a href="Perfil.html" class="nav-link">👤 Perfil</a>
+                    <a href="Aulas.html" class="nav-link">📅 Aulas</a>
+                </div>
+                <div class="user-info">
+                    <span id="nomeUtilizador">Carregando...</span>
+                    <button id="btnLogout" class="btn-logout">Sair</button>
+                </div>
+            </div>
+        </header>
 
-const userSchema = new mongoose.Schema({
-  // Campos originais (mantidos)
-  nome: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  idade: {
-    type: Number,
-    required: true,
-    min: 5
-  },
-  graduacao: {
-    type: String,
-    required: true,
-    enum: [
-      "Branca",
-      "Amarela", 
-      "Laranja",
-      "Verde",
-      "Azul",
-      "Marrom",
-      "Preta"
-    ]
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true
-  },
-  pass: {
-    type: String,
-    required: true
-  },
-  dataRegisto: {
-    type: Date,
-    default: Date.now
-  },
+        <main>
+            <!-- Resumo -->
+            <div class="resumo-container">
+                <div class="resumo-card pendentes">
+                    <div class="resumo-icon">⏳</div>
+                    <div class="resumo-info">
+                        <div class="resumo-label">Pendentes</div>
+                        <div class="resumo-valor" id="totalPendentes">€0</div>
+                    </div>
+                </div>
+                <div class="resumo-card atrasadas">
+                    <div class="resumo-icon">⚠️</div>
+                    <div class="resumo-info">
+                        <div class="resumo-label">Atrasadas</div>
+                        <div class="resumo-valor" id="totalAtrasadas">0</div>
+                    </div>
+                </div>
+                <div class="resumo-card pagas">
+                    <div class="resumo-icon">✓</div>
+                    <div class="resumo-info">
+                        <div class="resumo-label">Pagas</div>
+                        <div class="resumo-valor" id="totalPagas">0</div>
+                    </div>
+                </div>
+            </div>
 
-  // ============================================
-  // SISTEMA DE ADMINISTRAÇÃO
-  // ============================================
-  
-  // Admin automático: Faixa Preta ou Castanha = Admin
-  isAdmin: {
-    type: Boolean,
-    default: false
-  },
-  
-  // Super Admin: Admin principal com privilégios especiais
-  isSuperAdmin: {
-    type: Boolean,
-    default: false
-  },
+            <!-- Mensalidades Pendentes -->
+            <div class="secao">
+                <h2>⏳ Mensalidades Pendentes</h2>
+                <div id="listaPendentes" class="lista-pagamentos">
+                    <!-- Será preenchido via JavaScript -->
+                </div>
+            </div>
 
-  // ============================================
-  // NOVOS CAMPOS - Carreira de Atleta
-  // ============================================
+            <!-- Histórico -->
+            <div class="secao">
+                <h2>📜 Histórico de Pagamentos</h2>
+                <div id="listaHistorico" class="lista-pagamentos">
+                    <!-- Será preenchido via JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
 
-  // Carreira MMA
-  mma_vitorias: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  mma_derrotas: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  mma_empates: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  mma_especialidade: {
-    type: String,
-    trim: true,
-    default: null
-  },
-
-  // Carreira BJJ
-  bjj_vitorias: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  bjj_derrotas: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  bjj_especialidade: {
-    type: String,
-    trim: true,
-    default: null
-  },
-
-  // Características Físicas
-  altura: {
-    type: Number, // Em metros (ex: 1.85)
-    min: 0,
-    max: 3,
-    default: null
-  },
-  peso: {
-    type: Number, // Em kg (ex: 91.5)
-    min: 0,
-    max: 300,
-    default: null
-  },
-  alcance: {
-    type: Number, // Em cm
-    min: 0,
-    max: 300,
-    default: null
-  },
-
-  // Biografia
-  sobre: {
-    type: String,
-    trim: true,
-    default: null
-  },
-
-  // ============================================
-  // FOTO DE PERFIL
-  // ============================================
-  
-  foto_url: {
-    type: String,
-    default: null
-  }
-});
-
-// Método para retornar utilizador sem a palavra-passe
-userSchema.methods.toJSON = function() {
-  const user = this.toObject();
-  delete user.pass;
-  delete user.__v;
-  return user;
-};
-
-module.exports = mongoose.model("User", userSchema, "User");
+    <script src="script/mensalidades.js"></script>
+</body>
+</html>
